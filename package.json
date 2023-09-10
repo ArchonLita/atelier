@@ -1,0 +1,19 @@
+{
+  "name": "atelier",
+  "module": "src/Main.ts",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.6.0",
+    "@typescript-eslint/parser": "^6.6.0",
+    "bun-types": "latest",
+    "eslint": "^8.49.0",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2"
+  },
+  "scripts": {
+    "start": "bun run src/Main.ts",
+    "build": "bun build --target=bun --outdir=out ./src/Main.ts ",
+    "format": "bun run prettier . --write",
+    "lint": "bun eslint . --ext .ts"
+  },
+  "type": "module"
+}
