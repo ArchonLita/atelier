@@ -1,5 +1,9 @@
 import { CharacterData, CharacterSheet } from "./Character";
-import { Fighter } from "./classes/Fighter";
+import {
+  CharacterSerializer,
+  FighterData,
+  FighterEncoder as FighterEncoder,
+} from "./classes/Fighter";
 
 const data: CharacterData = {
   baseAbilityScores: {
@@ -14,5 +18,12 @@ const data: CharacterData = {
 };
 
 const sheet = new CharacterSheet(data);
-sheet.addCharacterClass(new Fighter({ id: "fighter", foo: 29 }));
+const serializer = new CharacterSerializer();
+serializer.registerEncoder(FighterEncoder);
+const charClass = serializer.serialize({
+  id: "fighter",
+  foo: 29,
+} as FighterData)!;
+sheet.addCharacterClass(charClass);
 console.log(sheet);
+console.log(sheet.classes[0].foo());

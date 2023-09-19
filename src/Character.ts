@@ -81,17 +81,13 @@ export class CharacterSheet {
 }
 
 export interface CharacterClassData {
-  id: string;
+  id?: string;
 }
 
 export abstract class CharacterClass<
   T extends CharacterClassData = CharacterClassData,
 > {
-  public readonly data: T;
-
-  constructor(data: T) {
-    this.data = data;
-  }
+  constructor(public readonly data: T) { }
 
   abstract foo(): number;
 }
