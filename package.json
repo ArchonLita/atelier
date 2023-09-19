@@ -11,9 +11,13 @@
   },
   "scripts": {
     "start": "bun run src/Main.ts",
+    "dev": "bun run --watch src/Main.ts",
     "build": "bun build --target=bun --outdir=out ./src/Main.ts ",
     "format": "bun run prettier . --write",
     "lint": "bun eslint . --ext .ts"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@types/node": "^20.6.0"
+  }
 }

@@ -47,6 +47,7 @@ export interface CharacterData {
   baseAbilityScores: {
     [key in Ability]: number;
   };
+  classes: CharacterClassData[];
 }
 
 export class CharacterSheet {
@@ -55,7 +56,14 @@ export class CharacterSheet {
   skillScores = construct(Skills, 0);
   skillModifiers = construct(Skills, 0);
 
-  constructor(data: CharacterData) {
+  classes: CharacterClass[] = [];
+
+  addCharacterClass(characterClass: CharacterClass) {
+    this.data.classes.push(characterClass.data);
+    this.classes.push(characterClass);
+  }
+
+  constructor(private data: CharacterData) {
     for (const ability of Abilities) {
       this.abilityScores[ability] = data.baseAbilityScores[ability];
       this.abilityModifiers[ability] = Math.floor(
@@ -70,4 +78,20 @@ export class CharacterSheet {
       }
     }
   }
+}
+
+export interface CharacterClassData {
+  id: string;
+}
+
+export abstract class CharacterClass<
+  T extends CharacterClassData = CharacterClassData,
+> {
+  public readonly data: T;
+
+  constructor(data: T) {
+    this.data = data;
+  }
+
+  abstract foo(): number;
 }
