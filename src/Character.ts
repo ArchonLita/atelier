@@ -68,9 +68,7 @@ export const CharacterClassDeserializer = new Deserializer<
 >();
 
 export interface FeatureData extends Data { }
-
 export abstract class Feature extends Logic<FeatureData> { }
-
 export class FeatureDeserializer extends Deserializer<FeatureData, Feature> { }
 
 export interface CharacterSheetData extends Data {
