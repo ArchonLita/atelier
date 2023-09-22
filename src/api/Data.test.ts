@@ -13,13 +13,11 @@ abstract class AbstractTestProto<
 }
 
 interface TestDataA extends AbstractTestData {
-  extraA: boolean;
+  extraA: string;
 }
 
 class TestProtoA extends AbstractTestProto<TestDataA> {
-  baz() {
-    return `Extra A: ${this.data.extraA} ${this.data.foo} ${this.data.bar}`;
-  }
+  baz = () => this.data.extraA;
 }
 
 const TestProtoADecoder: Decoder<TestProtoA> = {
@@ -28,13 +26,11 @@ const TestProtoADecoder: Decoder<TestProtoA> = {
 };
 
 interface TestDataB extends AbstractTestData {
-  extraB: boolean;
+  extraB: string;
 }
 
 class TestProtoB extends AbstractTestProto<TestDataB> {
-  baz() {
-    return `Extra B: ${this.data.extraB} ${this.data.foo} ${this.data.bar}`;
-  }
+  baz = () => this.data.extraB;
 }
 
 const TestProtoBDecoder: Decoder<TestProtoB> = {
@@ -49,21 +45,24 @@ TestDataBuilder.registerDecoder(TestProtoBDecoder);
 test("builds proto from data", () => {
   const dataA: TestDataA = {
     id: "A",
-    extraA: true,
+    extraA: "test A",
     foo: 39,
     bar: "data a",
   };
 
   const dataB: TestDataB = {
     id: "B",
-    extraB: true,
-    foo: 39,
+    extraB: "test B",
+    foo: 42,
     bar: "data b",
   };
 
-  const protoA = TestDataBuilder.deserialize(dataA);
-  const protoB = TestDataBuilder.deserialize(dataB);
+  const protoA = TestDataBuilder.deserialize(dataA)!;
+  const protoB = TestDataBuilder.deserialize(dataB)!;
 
-  expect(protoA).toEqual(new TestProtoA(dataA));
-  expect(protoB).toEqual(new TestProtoB(dataB));
+  expect(protoA.baz()).toEqual("test A");
+  expect(protoB.baz()).toEqual("test B");
+
+  expect(protoA.data).toBe(dataA);
+  expect(protoB.data).toBe(dataB);
 });
