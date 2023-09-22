@@ -1,13 +1,4 @@
-import {
-  CharacterClassDeserializer,
-  CharacterSheet,
-  CharacterSheetData,
-} from "./Character";
-import { Wizard } from "./classes/Wizard";
-
-CharacterClassDeserializer.registerDecoder(Wizard);
-
-const data: CharacterSheetData = {
+const data = {
   baseAbilityScores: {
     strength: 8,
     dexterity: 15,
@@ -23,6 +14,3 @@ const data: CharacterSheetData = {
     },
   ],
 };
-
-const sheet = new CharacterSheet(data);
-console.log(sheet);
