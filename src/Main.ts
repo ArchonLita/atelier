@@ -1,11 +1,11 @@
-import { CharacterData, CharacterSheet } from "./Character";
 import {
-  CharacterSerializer,
-  FighterData,
-  FighterEncoder as FighterEncoder,
-} from "./classes/Fighter";
+  CharacterSheetData,
+  CharacterSheet,
+  CharacterClassDeserializer,
+} from "./Character";
+import { WizardDecoder } from "./classes/Wizard";
 
-const data: CharacterData = {
+const data: CharacterSheetData = {
   baseAbilityScores: {
     strength: 8,
     dexterity: 15,
@@ -18,12 +18,11 @@ const data: CharacterData = {
 };
 
 const sheet = new CharacterSheet(data);
-const serializer = new CharacterSerializer();
-serializer.registerEncoder(FighterEncoder);
-const charClass = serializer.serialize({
-  id: "fighter",
-  foo: 29,
-} as FighterData)!;
-sheet.addCharacterClass(charClass);
+
+CharacterClassDeserializer.registerDecoder(WizardDecoder);
+const wizard = CharacterClassDeserializer.deserialize({
+  id: "wizard",
+});
+sheet.addCharacterClass(wizard!);
 console.log(sheet);
-console.log(sheet.classes[0].foo());
+console.log(sheet.data);

@@ -1,4 +1,4 @@
-import { construct } from "./Util";
+import { Data, Decoder, Deserializer, Logic, construct } from "./Util";
 
 export const Abilities = [
   "strength",
@@ -43,7 +43,16 @@ export const AbilitySkills: {
   charisma: ["deception", "intimidation", "performance", "persuasion"],
 };
 
-export interface CharacterData {
+export interface CharacterClassData extends Data { }
+
+export abstract class CharacterClass extends Logic<CharacterClassData> { }
+
+export const CharacterClassDeserializer = new Deserializer<
+  CharacterClassData,
+  CharacterClass
+>();
+
+export interface CharacterSheetData extends Data {
   baseAbilityScores: {
     [key in Ability]: number;
   };
@@ -63,7 +72,7 @@ export class CharacterSheet {
     this.classes.push(characterClass);
   }
 
-  constructor(private data: CharacterData) {
+  constructor(public readonly data: CharacterSheetData) {
     for (const ability of Abilities) {
       this.abilityScores[ability] = data.baseAbilityScores[ability];
       this.abilityModifiers[ability] = Math.floor(
@@ -78,16 +87,4 @@ export class CharacterSheet {
       }
     }
   }
-}
-
-export interface CharacterClassData {
-  id?: string;
-}
-
-export abstract class CharacterClass<
-  T extends CharacterClassData = CharacterClassData,
-> {
-  constructor(public readonly data: T) { }
-
-  abstract foo(): number;
 }
