@@ -32,10 +32,10 @@ test("listener is not called after being removed", () => {
   const emitter = new TestEmitter();
   const mockHandler = mock(() => undefined);
 
-  emitter.addListener("eventB", mockHandler);
-  emitter.call("eventB", "test data 1");
-  emitter.removeListener("eventB", mockHandler);
-  emitter.call("eventB", "test data 2");
+  emitter.addListener("eventA", mockHandler);
+  emitter.call("eventA", 39);
+  emitter.removeListener("eventA", mockHandler);
+  emitter.call("eventA", 42);
 
-  expect(mockHandler.mock.calls).toEqual([["test data 1"]]);
+  expect(mockHandler.mock.calls).toEqual([[39]]);
 });
