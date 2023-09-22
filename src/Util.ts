@@ -5,6 +5,10 @@ export function construct<K extends string, V>(
   return Object.fromEntries(keys.map((k) => [k, value])) as { [key in K]: V };
 }
 
+export function notEmpty<T>(value: T | null | undefined): value is T {
+  return value !== null && value !== undefined;
+}
+
 export interface Data {
   id?: string;
 }
@@ -15,7 +19,7 @@ export class Logic<D extends Data> {
 
 export interface Decoder<D extends Data = any, L extends Logic<D> = any> {
   id: string;
-  construct: (data: D) => L;
+  build: (data: D) => L;
 }
 
 export class Deserializer<D extends Data = any, L extends Logic<D> = any> {
@@ -26,6 +30,6 @@ export class Deserializer<D extends Data = any, L extends Logic<D> = any> {
 
   deserialize(data: D): L | undefined {
     if (!data.id) return;
-    return this.decoders.get(data.id)?.construct(data);
+    return this.decoders.get(data.id)?.build(data);
   }
 }

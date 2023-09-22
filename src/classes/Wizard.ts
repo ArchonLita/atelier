@@ -1,11 +1,33 @@
-import { CharacterClass, CharacterClassData } from "../Character";
+import { CharacterClass, FeatureData, FeatureDeserializer } from "../Character";
 import { Decoder } from "../Util";
 
-export interface WizardData extends CharacterClassData { }
+export class WizardClass extends CharacterClass {
+  buildFeature(data: FeatureData) {
+    return WizardFeatureDeserializer.deserialize(data);
+  }
+}
 
-export class Wizard extends CharacterClass { }
-
-export const WizardDecoder: Decoder<WizardData> = {
+export const Wizard: Decoder = {
   id: "wizard",
-  construct: (data) => new Wizard(data),
+  build: (data) => new WizardClass(data),
 };
+
+export const WizardFeatureA: Decoder = {
+  id: "a",
+  build: (data) => ({
+    data,
+    foo: () => console.log("A"),
+  }),
+};
+
+export const WizardFeatureB: Decoder = {
+  id: "b",
+  build: (data) => ({
+    data,
+    foo: () => console.log("B"),
+  }),
+};
+
+export const WizardFeatureDeserializer = new FeatureDeserializer();
+WizardFeatureDeserializer.registerDecoder(WizardFeatureA);
+WizardFeatureDeserializer.registerDecoder(WizardFeatureB);

@@ -1,9 +1,11 @@
 import {
-  CharacterSheetData,
-  CharacterSheet,
   CharacterClassDeserializer,
+  CharacterSheet,
+  CharacterSheetData,
 } from "./Character";
-import { WizardDecoder } from "./classes/Wizard";
+import { Wizard } from "./classes/Wizard";
+
+CharacterClassDeserializer.registerDecoder(Wizard);
 
 const data: CharacterSheetData = {
   baseAbilityScores: {
@@ -14,15 +16,13 @@ const data: CharacterSheetData = {
     wisdom: 12,
     charisma: 10,
   },
-  classes: [],
+  classes: [
+    {
+      id: "wizard",
+      features: [{ id: "a" }, { id: "b" }],
+    },
+  ],
 };
 
 const sheet = new CharacterSheet(data);
-
-CharacterClassDeserializer.registerDecoder(WizardDecoder);
-const wizard = CharacterClassDeserializer.deserialize({
-  id: "wizard",
-});
-sheet.addCharacterClass(wizard!);
 console.log(sheet);
-console.log(sheet.data);

@@ -1,4 +1,4 @@
-import { Data, Decoder, Deserializer, Logic, construct } from "./Util";
+import { Data, Deserializer, Logic, construct, notEmpty } from "./Util";
 
 export const Abilities = [
   "strength",
@@ -43,14 +43,35 @@ export const AbilitySkills: {
   charisma: ["deception", "intimidation", "performance", "persuasion"],
 };
 
-export interface CharacterClassData extends Data { }
+export interface CharacterClassData extends Data {
+  features: FeatureData[];
+}
 
-export abstract class CharacterClass extends Logic<CharacterClassData> { }
+export abstract class CharacterClass extends Logic<CharacterClassData> {
+  features: Feature[] = [];
+
+  abstract buildFeature(data: FeatureData): Feature | undefined;
+
+  constructor(data: CharacterClassData) {
+    super(data);
+
+    data.features
+      .map((data) => this.buildFeature(data))
+      .filter(notEmpty)
+      .forEach((feature) => this.features.push(feature));
+  }
+}
 
 export const CharacterClassDeserializer = new Deserializer<
   CharacterClassData,
   CharacterClass
 >();
+
+export interface FeatureData extends Data { }
+
+export abstract class Feature extends Logic<FeatureData> { }
+
+export class FeatureDeserializer extends Deserializer<FeatureData, Feature> { }
 
 export interface CharacterSheetData extends Data {
   baseAbilityScores: {
@@ -67,9 +88,9 @@ export class CharacterSheet {
 
   classes: CharacterClass[] = [];
 
-  addCharacterClass(characterClass: CharacterClass) {
-    this.data.classes.push(characterClass.data);
-    this.classes.push(characterClass);
+  addClass(data: CharacterClassData) {
+    const characterClass = CharacterClassDeserializer.deserialize(data);
+    if (characterClass) this.classes.push(characterClass);
   }
 
   constructor(public readonly data: CharacterSheetData) {
@@ -86,5 +107,7 @@ export class CharacterSheet {
         );
       }
     }
+
+    data.classes.forEach(this.addClass.bind(this));
   }
 }
