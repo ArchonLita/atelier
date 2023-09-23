@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { Builder, Data, Decoder, Proto } from "./Data";
+import { Registry, Data, Builder, Proto } from "./Data";
 
 interface AbstractTestData extends Data {
   foo: number;
@@ -20,7 +20,7 @@ class TestProtoA extends AbstractTestProto<TestDataA> {
   baz = () => this.data.extraA;
 }
 
-const TestProtoADecoder: Decoder<TestProtoA> = {
+const TestProtoADecoder: Builder<TestProtoA> = {
   id: "A",
   build: (data: TestDataA) => new TestProtoA(data),
 };
@@ -33,14 +33,14 @@ class TestProtoB extends AbstractTestProto<TestDataB> {
   baz = () => this.data.extraB;
 }
 
-const TestProtoBDecoder: Decoder<TestProtoB> = {
+const TestProtoBDecoder: Builder<TestProtoB> = {
   id: "B",
   build: (data: TestDataB) => new TestProtoB(data),
 };
 
-const TestDataBuilder = new Builder<AbstractTestProto>();
-TestDataBuilder.registerDecoder(TestProtoADecoder);
-TestDataBuilder.registerDecoder(TestProtoBDecoder);
+const TestDataBuilder = new Registry<AbstractTestProto>();
+TestDataBuilder.registerBuilder(TestProtoADecoder);
+TestDataBuilder.registerBuilder(TestProtoBDecoder);
 
 test("builds proto from data", () => {
   const dataA: TestDataA = {
@@ -57,8 +57,8 @@ test("builds proto from data", () => {
     bar: "data b",
   };
 
-  const protoA = TestDataBuilder.deserialize(dataA)!;
-  const protoB = TestDataBuilder.deserialize(dataB)!;
+  const protoA = TestDataBuilder.construct(dataA)!;
+  const protoB = TestDataBuilder.construct(dataB)!;
 
   expect(protoA.baz()).toEqual("test A");
   expect(protoB.baz()).toEqual("test B");

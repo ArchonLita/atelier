@@ -1,3 +1,8 @@
+import { Proto } from "./api/Data";
+import { Emitter } from "./api/Event";
+import { construct } from "./api/Util";
+
+// Stats
 export const Abilities = [
   "strength",
   "dexterity",
@@ -40,3 +45,42 @@ export const AbilitySkills: {
   wisdom: ["animal_handling", "insight", "medicine", "perception", "survival"],
   charisma: ["deception", "intimidation", "performance", "persuasion"],
 };
+
+// Character Sheet
+export type CharacterSheetEvents = {
+  load_stats: CharacterSheet;
+};
+
+export interface CharacterSheetData {
+  baseAbilityScores: Record<Ability, number>;
+}
+
+export class CharacterSheet extends Emitter<CharacterSheetEvents> {
+  abilityScores = construct(Abilities, 0);
+  abilityModifiers = construct(Abilities, 0);
+  skillScores = construct(Skills, 0);
+  skillModifiers = construct(Skills, 0);
+
+  constructor(private data: CharacterSheetData) {
+    super();
+
+    this.addListener("load_stats", this.loadStats.bind(this));
+    this.call("load_stats", this);
+  }
+
+  private loadStats() {
+    for (const ability of Abilities) {
+      this.abilityScores[ability] = this.data.baseAbilityScores[ability];
+      this.abilityModifiers[ability] = Math.floor(
+        (this.abilityScores[ability] - 10) / 2,
+      );
+
+      for (const skill of AbilitySkills[ability]) {
+        this.skillScores[skill] = this.abilityScores[ability];
+        this.skillModifiers[skill] = Math.floor(
+          (this.skillScores[skill] - 10) / 2,
+        );
+      }
+    }
+  }
+}

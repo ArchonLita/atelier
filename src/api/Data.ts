@@ -8,18 +8,18 @@ export class Proto<D extends Data> {
 
 type TypeParam<T> = T extends Proto<infer T> ? T : never;
 
-export interface Decoder<P extends Proto<any>> {
+export interface Builder<P extends Proto<any>> {
   id: string;
   build: (data: TypeParam<P>) => P;
 }
 
-export class Builder<P extends Proto<any>> {
-  decoders = new Map<string, Decoder<P>>();
-  registerDecoder(decoder: Decoder<P>) {
+export class Registry<P extends Proto<any>> {
+  decoders = new Map<string, Builder<P>>();
+  registerBuilder(decoder: Builder<P>) {
     this.decoders.set(decoder.id, decoder);
   }
 
-  deserialize(data: TypeParam<P>): P | undefined {
+  construct(data: TypeParam<P>): P | undefined {
     if (!data.id) return;
     return this.decoders.get(data.id)?.build(data);
   }
