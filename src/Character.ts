@@ -1,4 +1,4 @@
-import { Proto } from "./api/Data";
+import { Property } from "./api/Data";
 import { Emitter } from "./api/Event";
 import { construct } from "./api/Util";
 
@@ -51,26 +51,28 @@ export type CharacterSheetEvents = {
   load_stats: CharacterSheet;
 };
 
-export interface CharacterSheetData {
-  baseAbilityScores: Record<Ability, number>;
-}
-
 export class CharacterSheet extends Emitter<CharacterSheetEvents> {
+  @Property
+  baseAbilityScores = construct(Abilities, 0);
   abilityScores = construct(Abilities, 0);
   abilityModifiers = construct(Abilities, 0);
   skillScores = construct(Skills, 0);
   skillModifiers = construct(Skills, 0);
 
-  constructor(private data: CharacterSheetData) {
+  constructor() {
     super();
 
     this.addListener("load_stats", this.loadStats.bind(this));
+    this.load();
+  }
+
+  load() {
     this.call("load_stats", this);
   }
 
   private loadStats() {
     for (const ability of Abilities) {
-      this.abilityScores[ability] = this.data.baseAbilityScores[ability];
+      this.abilityScores[ability] = this.baseAbilityScores[ability];
       this.abilityModifiers[ability] = Math.floor(
         (this.abilityScores[ability] - 10) / 2,
       );

@@ -1,15 +1,14 @@
-import { CharacterSheet, CharacterSheetData } from "./Character";
+import { CharacterSheet } from "./Character";
 import { expect, test } from "bun:test";
+import { serialize, deserialize } from "./api/Data";
 
-const data: CharacterSheetData = {
-  baseAbilityScores: {
-    strength: 8,
-    wisdom: 10,
-    charisma: 12,
-    dexterity: 13,
-    constitution: 14,
-    intelligence: 15,
-  },
+const baseAbilityScores = {
+  strength: 8,
+  wisdom: 10,
+  charisma: 12,
+  dexterity: 13,
+  constitution: 14,
+  intelligence: 15,
 };
 
 const expectedModifiers = {
@@ -22,8 +21,23 @@ const expectedModifiers = {
 };
 
 test("constructs character sheets accurately", () => {
-  const sheet = new CharacterSheet(data);
+  const sheet = new CharacterSheet();
+  sheet.baseAbilityScores = baseAbilityScores;
+  sheet.load();
 
-  expect(sheet.abilityScores).toEqual(data.baseAbilityScores);
+  expect(sheet.abilityScores).toEqual(baseAbilityScores);
   expect(sheet.abilityModifiers).toEqual(expectedModifiers);
+});
+
+test("serialize and deserialize character sheets", () => {
+  const sheet = new CharacterSheet();
+  sheet.baseAbilityScores = baseAbilityScores;
+  sheet.load();
+
+  const data = serialize(sheet);
+  expect(data).toEqual({ baseAbilityScores });
+
+  const deserialized = deserialize(sheet, CharacterSheet);
+  deserialized.load();
+  expect(deserialized).toEqual(sheet);
 });

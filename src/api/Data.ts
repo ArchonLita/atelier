@@ -1,26 +1,32 @@
-export interface Data {
+type Constructor<T> = new () => T;
+
+interface Metadata {
   id?: string;
+  properties: string[];
 }
 
-export class Proto<D extends Data> {
-  constructor(public readonly data: D) { }
+interface SerializableObject {
+  metadata?: Metadata;
 }
 
-type TypeParam<T> = T extends Proto<infer T> ? T : never;
-
-export interface Builder<P extends Proto<any>> {
-  id: string;
-  build: (data: TypeParam<P>) => P;
+function getMetadata(target: SerializableObject): Metadata {
+  if (!target.metadata) target.metadata = { properties: [] };
+  return target.metadata;
 }
 
-export class Registry<P extends Proto<any>> {
-  decoders = new Map<string, Builder<P>>();
-  registerBuilder(decoder: Builder<P>) {
-    this.decoders.set(decoder.id, decoder);
-  }
+export function Property(target: Object, propertyKey: string) {
+  getMetadata(target).properties.push(propertyKey);
+}
 
-  construct(data: TypeParam<P>): P | undefined {
-    if (!data.id) return;
-    return this.decoders.get(data.id)?.build(data);
-  }
+export function serialize(target: Object): any {
+  const properties = getMetadata(target).properties;
+  return Object.fromEntries(
+    Object.entries(target).filter(([k]) => properties.includes(k)),
+  );
+}
+
+export function deserialize<T>(data: Object, ctor: Constructor<T>): T {
+  const obj = new ctor() as any;
+  Object.entries(data).forEach(([k, v]) => (obj[k] = v));
+  return obj as T;
 }
