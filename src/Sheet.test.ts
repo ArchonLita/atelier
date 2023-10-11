@@ -1,4 +1,4 @@
-import { CharacterSheet } from "./Character";
+import { Sheet } from "./Sheet";
 import { expect, test } from "bun:test";
 import { serialize, deserialize } from "./api/Data";
 
@@ -21,7 +21,7 @@ const expectedModifiers = {
 };
 
 test("constructs character sheets accurately", () => {
-  const sheet = new CharacterSheet();
+  const sheet = new Sheet();
   sheet.baseAbilityScores = baseAbilityScores;
   sheet.load();
 
@@ -30,14 +30,14 @@ test("constructs character sheets accurately", () => {
 });
 
 test("serialize and deserialize character sheets", () => {
-  const sheet = new CharacterSheet();
+  const sheet = new Sheet();
   sheet.baseAbilityScores = baseAbilityScores;
   sheet.load();
 
   const data = serialize(sheet);
-  expect(data).toEqual({ baseAbilityScores });
+  expect(data).toEqual({ baseAbilityScores, feats: [] });
 
-  const deserialized = deserialize(sheet, CharacterSheet);
+  const deserialized = deserialize(sheet, Sheet);
   deserialized.load();
   expect(deserialized).toEqual(sheet);
 });

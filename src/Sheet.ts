@@ -1,5 +1,5 @@
 import { Property } from "./api/Data";
-import { Emitter } from "./api/Event";
+import { Emitter, Subscribe } from "./api/Event";
 import { construct } from "./api/Util";
 
 // Stats
@@ -47,11 +47,11 @@ export const AbilitySkills: {
 };
 
 // Character Sheet
-export type CharacterSheetEvents = {
-  load_stats: CharacterSheet;
+export type SheetEvents = {
+  load_stats: Sheet;
 };
 
-export class CharacterSheet extends Emitter<CharacterSheetEvents> {
+export class Sheet extends Emitter<SheetEvents> {
   @Property
   baseAbilityScores = construct(Abilities, 0);
   abilityScores = construct(Abilities, 0);
@@ -59,10 +59,13 @@ export class CharacterSheet extends Emitter<CharacterSheetEvents> {
   skillScores = construct(Skills, 0);
   skillModifiers = construct(Skills, 0);
 
+  @Property
+  feats: Feat[] = [];
+
   constructor() {
     super();
 
-    this.addListener("load_stats", this.loadStats.bind(this));
+    this.addListener(this);
     this.load();
   }
 
@@ -70,7 +73,8 @@ export class CharacterSheet extends Emitter<CharacterSheetEvents> {
     this.call("load_stats", this);
   }
 
-  private loadStats() {
+  @Subscribe("load_stats")
+  loadStats() {
     for (const ability of Abilities) {
       this.abilityScores[ability] = this.baseAbilityScores[ability];
       this.abilityModifiers[ability] = Math.floor(
@@ -86,3 +90,5 @@ export class CharacterSheet extends Emitter<CharacterSheetEvents> {
     }
   }
 }
+
+export interface Feat { }

@@ -1,7 +1,7 @@
-import { Abilities, CharacterSheet } from "./Character";
+import { Abilities, Sheet } from "./Sheet";
 
-const char = new CharacterSheet();
-char.baseAbilityScores = {
+const sheet = new Sheet();
+sheet.baseAbilityScores = {
   strength: 8,
   dexterity: 15,
   constitution: 13,
@@ -9,11 +9,11 @@ char.baseAbilityScores = {
   wisdom: 12,
   charisma: 10,
 };
-char.load();
+sheet.load();
 
 console.log("-=-=- Starting Score -=-=-");
 for (const ability of Abilities) {
-  const score = char.abilityScores[ability];
-  const mod = char.abilityModifiers[ability];
+  const score = sheet.abilityScores[ability];
+  const mod = sheet.abilityModifiers[ability];
   console.log(`${ability}: ${mod >= 0 ? "+" : ""}${mod} (${score})`);
 }
