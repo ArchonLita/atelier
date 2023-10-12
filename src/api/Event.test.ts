@@ -9,15 +9,15 @@ type TestEvents = {
 
 class TestEmitter extends Emitter<TestEvents> { }
 
-test("listener called after event emitted", () => {
+test("handler called after event emitted", () => {
   const emitter = new TestEmitter();
   const mockHandlerA = mock(() => undefined);
   const mockHandlerB = mock(() => undefined);
   const mockHandlerC = mock(() => undefined);
 
-  emitter.addHandler("eventA", mockHandlerA);
-  emitter.addHandler("eventB", mockHandlerB);
-  emitter.addHandler("eventC", mockHandlerC);
+  emitter.addMethod("eventA", mockHandlerA);
+  emitter.addMethod("eventB", mockHandlerB);
+  emitter.addMethod("eventC", mockHandlerC);
 
   emitter.call("eventA", 39);
   emitter.call("eventB", "test data");
@@ -28,13 +28,31 @@ test("listener called after event emitted", () => {
   expect(mockHandlerC.mock.calls).toEqual([[undefined]]);
 });
 
-test("listener is not called after being removed", () => {
+test("handler called based on priority, then insertion order", () => {
+  const array: string[] = [];
+
+  const emitter = new TestEmitter();
+  const mockHandlerA = { method: mock(() => array.push("a")), priority: -100 };
+  const mockHandlerB = { method: mock(() => array.push("b")), priority: 0 };
+  const mockHandlerC = { method: mock(() => array.push("c")), priority: 0 };
+  const mockHandlerD = { method: mock(() => array.push("d")), priority: 100 };
+
+  emitter.addHandler("eventA", mockHandlerA);
+  emitter.addHandler("eventA", mockHandlerB);
+  emitter.addHandler("eventA", mockHandlerC);
+  emitter.addHandler("eventA", mockHandlerD);
+  emitter.call("eventA", 39);
+
+  expect(array).toEqual(["d", "b", "c", "a"]);
+});
+
+test("handler is not called after being removed", () => {
   const emitter = new TestEmitter();
   const mockHandler = mock(() => undefined);
 
-  emitter.addHandler("eventA", mockHandler);
+  emitter.addMethod("eventA", mockHandler);
   emitter.call("eventA", 39);
-  emitter.removeHandler("eventA", mockHandler);
+  emitter.removeMethod("eventA", mockHandler);
   emitter.call("eventA", 42);
 
   expect(mockHandler.mock.calls).toEqual([[39]]);
@@ -58,6 +76,7 @@ class TestListener {
     this.fns[2](num);
   }
 }
+
 test("subscribe a listener to an emitter", () => {
   const emitter = new TestEmitter();
   const handler1 = mock(() => undefined);

@@ -52,16 +52,6 @@ export type SheetEvents = {
 };
 
 export class Sheet extends Emitter<SheetEvents> {
-  @Property
-  baseAbilityScores = construct(Abilities, 0);
-  abilityScores = construct(Abilities, 0);
-  abilityModifiers = construct(Abilities, 0);
-  skillScores = construct(Skills, 0);
-  skillModifiers = construct(Skills, 0);
-
-  @Property
-  feats: Feat[] = [];
-
   constructor() {
     super();
 
@@ -72,6 +62,13 @@ export class Sheet extends Emitter<SheetEvents> {
   load() {
     this.call("load_stats", this);
   }
+
+  @Property
+  baseAbilityScores = construct(Abilities, 0);
+  abilityScores = construct(Abilities, 0);
+  abilityModifiers = construct(Abilities, 0);
+  skillScores = construct(Skills, 0);
+  skillModifiers = construct(Skills, 0);
 
   @Subscribe("load_stats")
   loadStats() {
@@ -88,6 +85,14 @@ export class Sheet extends Emitter<SheetEvents> {
         );
       }
     }
+  }
+
+  @Property
+  feats: Feat[] = [];
+
+  addFeat(feat: Feat) {
+    this.feats.push(feat);
+    this.addListener(feat);
   }
 }
 
