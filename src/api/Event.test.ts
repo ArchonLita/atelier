@@ -32,10 +32,10 @@ test("handler called based on priority, then insertion order", () => {
   const array: string[] = [];
 
   const emitter = new TestEmitter();
-  const mockHandlerA = { method: mock(() => array.push("a")), priority: -100 };
-  const mockHandlerB = { method: mock(() => array.push("b")), priority: 0 };
-  const mockHandlerC = { method: mock(() => array.push("c")), priority: 0 };
-  const mockHandlerD = { method: mock(() => array.push("d")), priority: 100 };
+  const mockHandlerA = { method: () => array.push("a"), priority: -100 };
+  const mockHandlerB = { method: () => array.push("b"), priority: 0 };
+  const mockHandlerC = { method: () => array.push("c"), priority: 0 };
+  const mockHandlerD = { method: () => array.push("d"), priority: 100 };
 
   emitter.addHandler("eventA", mockHandlerA);
   emitter.addHandler("eventA", mockHandlerB);

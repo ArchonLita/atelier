@@ -61,8 +61,11 @@ export class Emitter<T extends EventMap> {
     )) {
       const method = Reflect.get(listener, label);
       const metadata = getMetadata(method);
-      if (metadata.event)
-        this.addMethod(metadata.event as any, method.bind(listener));
+      if (!metadata) continue;
+      this.addHandler(metadata.event as any, {
+        method: method.bind(listener),
+        priority: metadata.priority,
+      });
     }
   }
 
@@ -72,21 +75,23 @@ export class Emitter<T extends EventMap> {
 }
 
 interface Metadata {
-  event?: string;
+  event: string;
+  priority: number;
 }
 
 interface HandlerObject {
   metadata?: Metadata;
 }
 
-function getMetadata(target: HandlerObject): Metadata {
-  if (!target.metadata) target.metadata = {};
+function getMetadata(target: HandlerObject): Metadata | undefined {
   return target.metadata;
 }
 
-export function Subscribe(event: string) {
+export function Subscribe(event: string, priority: number = 0) {
   return (target: any, key: string) => {
-    const metadata = getMetadata(target[key]);
-    metadata.event = event;
+    target[key].metadata = {
+      event,
+      priority,
+    };
   };
 }

@@ -1,4 +1,5 @@
 import { Abilities, Sheet } from "./Sheet";
+import { Resilient } from "./dnd/feats/Resilient";
 
 const sheet = new Sheet();
 sheet.baseAbilityScores = {
@@ -9,7 +10,10 @@ sheet.baseAbilityScores = {
   wisdom: 12,
   charisma: 10,
 };
+sheet.addFeat(new Resilient("intelligence"));
 sheet.load();
+
+console.log(sheet);
 
 console.log("-=-=- Starting Score -=-=-");
 for (const ability of Abilities) {
