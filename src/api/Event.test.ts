@@ -1,95 +1,75 @@
 import { expect, mock, test } from "bun:test";
-import { Emitter, Subscribe } from "./Event";
+import { Emitter, Subscribe, createEvent } from "./Event";
 
-type TestEvents = {
-  eventA: number;
-  eventB: string;
-  eventC: undefined;
-};
+test("register event handlers from listener", () => {
+  const TestEventA = createEvent<number>();
+  const TestEventB = createEvent<string>();
+  const TestEventC = createEvent<boolean>();
 
-class TestEmitter extends Emitter<TestEvents> { }
+  const fnA = mock((data: number) => data);
+  const fnB = mock((data: string) => data);
+  const fnC = mock((data: boolean) => data);
 
-test("handler called after event emitted", () => {
-  const emitter = new TestEmitter();
-  const mockHandlerA = mock(() => undefined);
-  const mockHandlerB = mock(() => undefined);
-  const mockHandlerC = mock(() => undefined);
+  class Listener {
+    @Subscribe(TestEventA)
+    onTestEventA(data: number) {
+      fnA(data);
+    }
 
-  emitter.addMethod("eventA", mockHandlerA);
-  emitter.addMethod("eventB", mockHandlerB);
-  emitter.addMethod("eventC", mockHandlerC);
+    @Subscribe(TestEventB)
+    onTestEventB(data: string) {
+      fnB(data);
+    }
 
-  emitter.call("eventA", 39);
-  emitter.call("eventB", "test data");
-  emitter.call("eventC", undefined);
-
-  expect(mockHandlerA.mock.calls).toEqual([[39]]);
-  expect(mockHandlerB.mock.calls).toEqual([["test data"]]);
-  expect(mockHandlerC.mock.calls).toEqual([[undefined]]);
-});
-
-test("handler called based on priority, then insertion order", () => {
-  const array: string[] = [];
-
-  const emitter = new TestEmitter();
-  const mockHandlerA = { method: () => array.push("a"), priority: -100 };
-  const mockHandlerB = { method: () => array.push("b"), priority: 0 };
-  const mockHandlerC = { method: () => array.push("c"), priority: 0 };
-  const mockHandlerD = { method: () => array.push("d"), priority: 100 };
-
-  emitter.addHandler("eventA", mockHandlerA);
-  emitter.addHandler("eventA", mockHandlerB);
-  emitter.addHandler("eventA", mockHandlerC);
-  emitter.addHandler("eventA", mockHandlerD);
-  emitter.call("eventA", 39);
-
-  expect(array).toEqual(["d", "b", "c", "a"]);
-});
-
-test("handler is not called after being removed", () => {
-  const emitter = new TestEmitter();
-  const mockHandler = mock(() => undefined);
-
-  emitter.addMethod("eventA", mockHandler);
-  emitter.call("eventA", 39);
-  emitter.removeMethod("eventA", mockHandler);
-  emitter.call("eventA", 42);
-
-  expect(mockHandler.mock.calls).toEqual([[39]]);
-});
-
-class TestListener {
-  constructor(private fns: Function[]) { }
-
-  @Subscribe("eventA")
-  foo(num: number) {
-    this.fns[0](num);
+    @Subscribe(TestEventC)
+    onTestEventC(data: boolean) {
+      fnC(data);
+    }
   }
 
-  @Subscribe("eventB")
-  bar(str: string) {
-    this.fns[1](str);
-  }
-
-  @Subscribe("eventA")
-  baz(num: number) {
-    this.fns[2](num);
-  }
-}
-
-test("subscribe a listener to an emitter", () => {
-  const emitter = new TestEmitter();
-  const handler1 = mock(() => undefined);
-  const handler2 = mock(() => undefined);
-  const handler3 = mock(() => undefined);
-
-  const listener = new TestListener([handler1, handler2, handler3]);
+  const emitter = new Emitter();
+  const listener = new Listener();
   emitter.addListener(listener);
 
-  emitter.call("eventA", 39);
-  expect(handler1.mock.calls).toEqual([[39]]);
-  expect(handler3.mock.calls).toEqual([[39]]);
+  emitter.call(TestEventA, 5);
+  expect(fnA.mock.calls).toEqual([[5]]);
 
-  emitter.call("eventB", "test data");
-  expect(handler2.mock.calls).toEqual([["test data"]]);
+  emitter.call(TestEventB, "test");
+  expect(fnB.mock.calls).toEqual([["test"]]);
+
+  emitter.call(TestEventC, true);
+  expect(fnC.mock.calls).toEqual([[true]]);
+});
+
+test("call event handlers in priority", () => {
+  const TestEvent = createEvent();
+  const arr: string[] = [];
+
+  const fnA = mock(() => arr.push("A"));
+  const fnB = mock(() => arr.push("B"));
+  const fnC = mock(() => arr.push("C"));
+
+  class Listener {
+    @Subscribe(TestEvent, -10)
+    testFnA() {
+      fnA();
+    }
+
+    @Subscribe(TestEvent, 10)
+    testFnB() {
+      fnB();
+    }
+
+    @Subscribe(TestEvent, 0)
+    testFnC() {
+      fnC();
+    }
+  }
+
+  const emitter = new Emitter();
+  const listener = new Listener();
+  emitter.addListener(listener);
+  emitter.call(TestEvent);
+
+  expect(arr).toEqual(["B", "C", "A"]);
 });
