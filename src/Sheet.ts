@@ -48,7 +48,10 @@ export const AbilitySkills: {
 
 // Character Sheet
 export type SheetEvents = {
-  load_stats: Sheet;
+  load_ability_scores: Sheet;
+  load_ability_modifier: Sheet;
+  load_skill_scores: Sheet;
+  load_skill_modifier: Sheet;
 };
 
 export class Sheet extends Emitter<SheetEvents> {
@@ -60,7 +63,10 @@ export class Sheet extends Emitter<SheetEvents> {
   }
 
   load() {
-    this.call("load_stats", this);
+    this.call("load_ability_scores", this);
+    this.call("load_ability_modifier", this);
+    this.call("load_skill_scores", this);
+    this.call("load_skill_modifier", this);
   }
 
   @Property
@@ -70,21 +76,33 @@ export class Sheet extends Emitter<SheetEvents> {
   skillScores = construct(Skills, 0);
   skillModifiers = construct(Skills, 0);
 
-  @Subscribe("load_stats")
-  loadStats() {
-    for (const ability of Abilities) {
+  @Subscribe("load_ability_scores")
+  loadAbilityScores() {
+    for (const ability of Abilities)
       this.abilityScores[ability] = this.baseAbilityScores[ability];
+  }
+
+  @Subscribe("load_ability_modifier")
+  loadAbilityModifier() {
+    for (const ability of Abilities)
       this.abilityModifiers[ability] = Math.floor(
         (this.abilityScores[ability] - 10) / 2,
       );
+  }
 
-      for (const skill of AbilitySkills[ability]) {
+  @Subscribe("load_skill_scores")
+  loadSkillScores() {
+    for (const ability of Abilities)
+      for (const skill of AbilitySkills[ability])
         this.skillScores[skill] = this.abilityScores[ability];
-        this.skillModifiers[skill] = Math.floor(
-          (this.skillScores[skill] - 10) / 2,
-        );
-      }
-    }
+  }
+
+  @Subscribe("load_skill_modifier")
+  loadSkillModifiers() {
+    for (const skill of Skills)
+      this.skillModifiers[skill] = Math.floor(
+        (this.skillScores[skill] - 10) / 2,
+      );
   }
 
   @Property

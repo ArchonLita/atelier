@@ -13,7 +13,7 @@ sheet.baseAbilityScores = {
 sheet.addFeat(new Resilient("intelligence"));
 sheet.load();
 
-console.log(sheet);
+console.log(sheet.feats);
 
 console.log("-=-=- Starting Score -=-=-");
 for (const ability of Abilities) {
