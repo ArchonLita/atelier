@@ -1,3 +1,5 @@
+export type Optional<T> = T | undefined;
+
 export function construct<K extends string, V>(
   keys: readonly K[],
   value: V,

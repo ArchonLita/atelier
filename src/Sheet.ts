@@ -114,4 +114,4 @@ export class Sheet extends Emitter<SheetEvents> {
   }
 }
 
-export interface Feat { }
+export interface Feat {}

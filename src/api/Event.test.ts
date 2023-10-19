@@ -41,6 +41,44 @@ test("register event handlers from listener", () => {
   expect(fnC.mock.calls).toEqual([[true]]);
 });
 
+test("ignore removed event handlers and listeners", () => {
+  const TestEvent = createEvent();
+
+  const fnA = mock(() => undefined);
+  const fnB = mock(() => undefined);
+  const fnC = mock(() => undefined);
+  const fnD = mock(() => undefined);
+
+  class Listener {
+    @Subscribe(TestEvent)
+    testFnA() {
+      fnA();
+    }
+
+    @Subscribe(TestEvent)
+    testFnB() {
+      fnB();
+    }
+  }
+
+  const listener = new Listener();
+  const emitter = new Emitter();
+
+  emitter.addListener(listener);
+  emitter.addHandler(TestEvent, { method: fnC, priority: 0 });
+  emitter.addHandler(TestEvent, { method: fnD, priority: 0 });
+
+  emitter.removeListener(listener);
+  emitter.removeMethod(TestEvent, fnD);
+
+  emitter.call(TestEvent);
+
+  expect(fnA.mock.calls).toEqual([]);
+  expect(fnB.mock.calls).toEqual([]);
+  expect(fnC.mock.calls).toEqual([[]]);
+  expect(fnD.mock.calls).toEqual([]);
+});
+
 test("call event handlers in priority", () => {
   const TestEvent = createEvent();
   const arr: string[] = [];
