@@ -1,4 +1,4 @@
-import { Ability, Feat, Sheet } from "../../Sheet";
+import { Ability, Feat, Sheet } from "../../dnd/Sheet";
 import { Subscribe } from "../../api/Event";
 
 export class Resilient implements Feat {

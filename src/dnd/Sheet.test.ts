@@ -1,6 +1,6 @@
 import { Sheet } from "./Sheet";
 import { expect, test } from "bun:test";
-import { serialize, deserialize } from "./api/Data";
+import { serialize, deserialize } from "../api/Data";
 
 const baseAbilityScores = {
   strength: 8,
