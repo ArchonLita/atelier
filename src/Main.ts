@@ -1,6 +1,6 @@
 import { Sheet } from "./dnd/Sheet";
 import { Resilient } from "./content/feats/Resilient";
-import { Abilities } from "./dnd/Attributes";
+import { Abilities } from "./dnd/Stats";
 
 const sheet = new Sheet();
 sheet.baseAbilityScores = {

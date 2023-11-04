@@ -1,14 +1,23 @@
 import { Property } from "../api/Data";
 import { Emitter, Subscribe, createEvent } from "../api/Event";
 import { construct } from "../api/Util";
-import { Abilities, AbilitySkills, Skills } from "./Attributes";
-import { Race } from "./Race";
+import { Abilities, Ability, AbilitySkills, Modifier, Skills } from "./Stats";
+
+export interface Feat { }
+
+export interface Trait { }
+
+export class Race {
+  traits: Trait[] = [];
+}
 
 // Character Sheet
 export const LoadAbilityScoresEvent = createEvent<Sheet>();
 export const LoadAbilityModifiersEvent = createEvent<Sheet>();
 export const LoadSkillScoresEvent = createEvent<Sheet>();
 export const LoadSkillModifiersEvent = createEvent<Sheet>();
+
+export const LoadModifiersEvent = createEvent<Sheet>();
 
 export class Sheet extends Emitter {
   constructor() {
@@ -23,6 +32,8 @@ export class Sheet extends Emitter {
     this.call(LoadAbilityModifiersEvent, this);
     this.call(LoadSkillScoresEvent, this);
     this.call(LoadSkillModifiersEvent, this);
+
+    this.call(LoadModifiersEvent, this);
   }
 
   @Property
@@ -31,6 +42,10 @@ export class Sheet extends Emitter {
   abilityModifiers = construct(Abilities, 0);
   skillScores = construct(Skills, 0);
   skillModifiers = construct(Skills, 0);
+
+  speed = 0;
+
+  modifiers: Modifier[] = [];
 
   @Subscribe(LoadAbilityScoresEvent)
   loadAbilityScores() {
@@ -74,7 +89,7 @@ export class Sheet extends Emitter {
 
   setRace(race: Race) {
     this.race = race;
+    this.addListener(race);
+    this.addListeners(...race.traits);
   }
 }
-
-export interface Feat { }

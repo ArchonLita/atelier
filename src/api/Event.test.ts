@@ -41,6 +41,25 @@ test("register event handlers from listener", () => {
   expect(fnC.mock.calls).toEqual([[true]]);
 });
 
+test("add multiple listeners at the same time", () => {
+  const TestEvent = createEvent();
+  const testFn = mock(() => undefined);
+
+  class Listener {
+    @Subscribe(TestEvent)
+    onTestEvent() {
+      testFn();
+    }
+  }
+
+  const emitter = new Emitter();
+  emitter.addListeners(new Listener(), new Listener(), new Listener());
+
+  emitter.call(TestEvent);
+
+  expect(testFn.mock.calls.length).toEqual(3);
+});
+
 test("ignore removed event handlers and listeners", () => {
   const TestEvent = createEvent();
 

@@ -1,6 +1,6 @@
 import { Optional } from "./Util";
 
-export interface Listener {}
+export interface Listener { }
 
 export interface Event<_D = any> {
   id: string;
@@ -49,9 +49,9 @@ export class Emitter {
     const handlers = this.handlers.get(event.id);
     return handlers
       ? handlers
-          .filter((h) => h.method == method)
-          .map((h) => this.removeHandler(event.id, h))
-          .reduce((acc, val) => acc || val, false)
+        .filter((h) => h.method == method)
+        .map((h) => this.removeHandler(event.id, h))
+        .reduce((acc, val) => acc || val, false)
       : false;
   }
 
@@ -85,6 +85,10 @@ export class Emitter {
         priority: metadata.priority,
       });
     }
+  }
+
+  addListeners(...listeners: Listener[]) {
+    listeners.forEach(this.addListener.bind(this));
   }
 
   removeListener(listener: Listener) {

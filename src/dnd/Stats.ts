@@ -40,3 +40,18 @@ export const AbilitySkills: {
   wisdom: ["animal_handling", "insight", "medicine", "perception", "survival"],
   charisma: ["deception", "intimidation", "performance", "persuasion"],
 };
+
+export const Targets = ["ability_score"] as const;
+export type Target = (typeof Targets)[number];
+
+type Operation = (a: number, b: number) => number;
+export namespace Operation {
+  export const Addition: Operation = (a, b) => a + b;
+}
+
+export interface Modifier<K extends string = any> {
+  type: Target;
+  key: K;
+  value: number;
+  apply: Operation;
+}
