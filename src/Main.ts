@@ -1,6 +1,7 @@
 import { Sheet } from "./dnd/Sheet";
 import { Resilient } from "./content/feats/Resilient";
 import { Abilities } from "./dnd/Stats";
+import { Elf } from "./content/races/elf/Elf";
 
 const sheet = new Sheet();
 sheet.baseAbilityScores = {
@@ -12,6 +13,7 @@ sheet.baseAbilityScores = {
   charisma: 10,
 };
 sheet.addFeat(new Resilient("intelligence"));
+sheet.setRace(new Elf());
 sheet.load();
 
 console.log(sheet.feats);

@@ -1,5 +1,6 @@
 import { Subscribe } from "../../../api/Event";
-import { Trait, Race, LoadAbilityScoresEvent, Sheet } from "../../../dnd/Sheet";
+import { LoadModifiersEvent, Race, Trait } from "../../../dnd/Sheet";
+import { Effect, Effects } from "../../../dnd/Stats";
 
 export class KeenSenses implements Trait {
   //TODO Perception Proficiency
@@ -19,9 +20,11 @@ export class Elf extends Race {
     this.traits.push(new KeenSenses(), new FeyAncestry(), new Trance());
   }
 
-  @Subscribe(LoadAbilityScoresEvent, -10)
-  loadAbilityScores(sheet: Sheet) {
-    sheet.abilityScores.dexterity += 2;
-    sheet.speed = 30;
+  @Subscribe(LoadModifiersEvent)
+  loadModifiers(modifiers: Effect[]) {
+    modifiers.push(
+      Effects.addSkillScore("dexterity", 2),
+      Effects.addAttribute("speed", 30),
+    );
   }
 }

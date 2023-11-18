@@ -1,7 +1,14 @@
 import { Property } from "../api/Data";
 import { Emitter, Subscribe, createEvent } from "../api/Event";
 import { construct } from "../api/Util";
-import { Abilities, Ability, AbilitySkills, Modifier, Skills } from "./Stats";
+import {
+  Abilities,
+  AbilitySkills,
+  Effect,
+  Effects,
+  Skills,
+  applyEffects,
+} from "./Stats";
 
 export interface Feat { }
 
@@ -17,7 +24,7 @@ export const LoadAbilityModifiersEvent = createEvent<Sheet>();
 export const LoadSkillScoresEvent = createEvent<Sheet>();
 export const LoadSkillModifiersEvent = createEvent<Sheet>();
 
-export const LoadModifiersEvent = createEvent<Sheet>();
+export const LoadModifiersEvent = createEvent<Effect[]>();
 
 export class Sheet extends Emitter {
   constructor() {
@@ -28,12 +35,9 @@ export class Sheet extends Emitter {
   }
 
   load() {
-    this.call(LoadAbilityScoresEvent, this);
-    this.call(LoadAbilityModifiersEvent, this);
-    this.call(LoadSkillScoresEvent, this);
-    this.call(LoadSkillModifiersEvent, this);
-
-    this.call(LoadModifiersEvent, this);
+    this.loadBaseAbilityScores();
+    this.call(LoadModifiersEvent, this.modifiers);
+    this.loadAttributes();
   }
 
   @Property
@@ -45,35 +49,48 @@ export class Sheet extends Emitter {
 
   speed = 0;
 
-  modifiers: Modifier[] = [];
+  modifiers: Effect[] = [];
 
-  @Subscribe(LoadAbilityScoresEvent)
-  loadAbilityScores() {
-    for (const ability of Abilities)
-      this.abilityScores[ability] = this.baseAbilityScores[ability];
+  @Subscribe(LoadModifiersEvent, -100)
+  loadModifiers(modifiers: Effect[]) {
+    this.modifiers = modifiers;
   }
 
-  @Subscribe(LoadAbilityModifiersEvent)
-  loadAbilityModifier() {
-    for (const ability of Abilities)
+  loadBaseAbilityScores() {
+    for (const ability of Abilities) {
+      this.modifiers.push(
+        Effects.addAbilityScore(ability, this.baseAbilityScores[ability]),
+      );
+    }
+  }
+
+  loadAttributes() {
+    for (const ability of Abilities) {
+      this.abilityScores[ability] = applyEffects(
+        0,
+        this.modifiers,
+        Effects.filter(ability),
+      );
+
       this.abilityModifiers[ability] = Math.floor(
         (this.abilityScores[ability] - 10) / 2,
       );
-  }
+    }
+    for (const ability of Abilities) {
+      for (const skill of AbilitySkills[ability]) {
+        this.skillScores[skill] = applyEffects(
+          this.abilityScores[ability],
+          this.modifiers,
+          Effects.filter(skill),
+        );
 
-  @Subscribe(LoadSkillScoresEvent)
-  loadSkillScores() {
-    for (const ability of Abilities)
-      for (const skill of AbilitySkills[ability])
-        this.skillScores[skill] = this.abilityScores[ability];
-  }
+        this.skillModifiers[skill] = Math.floor(
+          (this.skillScores[skill] - 10) / 2,
+        );
+      }
+    }
 
-  @Subscribe(LoadSkillModifiersEvent)
-  loadSkillModifiers() {
-    for (const skill of Skills)
-      this.skillModifiers[skill] = Math.floor(
-        (this.skillScores[skill] - 10) / 2,
-      );
+    this.speed = applyEffects(0, this.modifiers, Effects.filter("speed"));
   }
 
   @Property
