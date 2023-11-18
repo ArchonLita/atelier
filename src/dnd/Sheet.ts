@@ -10,9 +10,9 @@ import {
   applyEffects,
 } from "./Stats";
 
-export interface Feat { }
+export interface Feat {}
 
-export interface Trait { }
+export interface Trait {}
 
 export class Race {
   traits: Trait[] = [];

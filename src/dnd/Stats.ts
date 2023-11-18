@@ -100,6 +100,6 @@ export namespace Effects {
 
   export const filter =
     (key: any): EffectFilter =>
-      (e: Effect) =>
-        e.key === key;
+    (e: Effect) =>
+      e.key === key;
 }
