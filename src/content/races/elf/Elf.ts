@@ -23,7 +23,7 @@ export class Elf extends Race {
   @Subscribe(LoadModifiersEvent)
   loadModifiers(modifiers: Effect[]) {
     modifiers.push(
-      Effects.addSkillScore("dexterity", 2),
+      Effects.addAbilityScore("dexterity", 2),
       Effects.addAttribute("speed", 30),
     );
   }

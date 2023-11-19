@@ -40,7 +40,7 @@ export class Sheet extends Emitter {
     this.loadAttributes();
   }
 
-  @Property
+  @Property()
   baseAbilityScores = construct(Abilities, 0);
   abilityScores = construct(Abilities, 0);
   abilityModifiers = construct(Abilities, 0);
@@ -93,7 +93,7 @@ export class Sheet extends Emitter {
     this.speed = applyEffects(0, this.modifiers, Effects.filter("speed"));
   }
 
-  @Property
+  @Property()
   feats: Feat[] = [];
 
   addFeat(feat: Feat) {
@@ -101,7 +101,7 @@ export class Sheet extends Emitter {
     this.addListener(feat);
   }
 
-  @Property
+  @Property(Race)
   race?: Race;
 
   setRace(race: Race) {

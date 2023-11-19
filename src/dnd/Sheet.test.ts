@@ -1,6 +1,6 @@
 import { Sheet } from "./Sheet";
 import { expect, test } from "bun:test";
-import { serialize, deserialize } from "../api/Data";
+import { testSerialization } from "../api/Data.test";
 
 const baseAbilityScores = {
   strength: 8,
@@ -34,10 +34,7 @@ test("serialize and deserialize character sheets", () => {
   sheet.baseAbilityScores = baseAbilityScores;
   sheet.load();
 
-  const data = serialize(sheet);
-  expect(data).toEqual({ baseAbilityScores, feats: [] });
+  const data = { baseAbilityScores, feats: [] };
 
-  const deserialized = deserialize(sheet, Sheet);
-  deserialized.load();
-  expect(deserialized).toEqual(sheet);
+  testSerialization(sheet, data, Sheet);
 });
