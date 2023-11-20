@@ -1,3 +1,4 @@
+import { Property } from "../../../api/Data";
 import { Subscribe } from "../../../api/Event";
 import { LoadModifiersEvent, Race, Trait } from "../../../dnd/Sheet";
 import { Effect, Effects } from "../../../dnd/Stats";
@@ -14,11 +15,9 @@ export class Trance implements Trait {
   //TODO long rest duration 4h
 }
 
-export class Elf extends Race {
-  constructor() {
-    super();
-    this.traits.push(new KeenSenses(), new FeyAncestry(), new Trance());
-  }
+export class Elf implements Race {
+  @Property(KeenSenses, FeyAncestry, Trance)
+  traits: Trait[] = [new KeenSenses(), new FeyAncestry(), new Trance()];
 
   @Subscribe(LoadModifiersEvent)
   loadModifiers(modifiers: Effect[]) {

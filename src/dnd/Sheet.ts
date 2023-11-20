@@ -14,8 +14,8 @@ export interface Feat {}
 
 export interface Trait {}
 
-export class Race {
-  traits: Trait[] = [];
+export interface Race {
+  traits: Trait[];
 }
 
 // Character Sheet
@@ -101,7 +101,8 @@ export class Sheet extends Emitter {
     this.addListener(feat);
   }
 
-  @Property(Race)
+  // TODO register all races here
+  @Property()
   race?: Race;
 
   setRace(race: Race) {

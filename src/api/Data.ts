@@ -1,62 +1,87 @@
-import { Optional } from "./Util";
+import { isPrimitive } from "./Util";
 
-type Constructor<T> = new () => T;
+export type Constructor<T> = new () => T;
 
-interface Property {
-  ctor?: Constructor<any>;
+interface PropertyData {
+  serializer: Serializer<any>;
 }
 
 interface Metadata {
   id?: string;
-  properties: Record<string, Property>;
+  properties: Record<string, PropertyData>;
 }
 
-interface SerializableObject {
-  metadata?: Metadata;
-}
-
-function createMetadata(target: SerializableObject): Metadata {
+function getMetadata(target: any): Metadata {
   return target.metadata ?? (target.metadata = { properties: {} });
 }
 
-function getMetadata(target: any): Optional<Metadata> {
-  return target.metadata;
-}
+export function Property(...ctors: Constructor<any>[]) {
+  const serializer: Serializer<any> = (() => {
+    if (ctors.length === 0) return DefaultSerializer;
+    else if (ctors.length === 1) return new ClassSerializer(ctors[0]);
+    else throw "Subclasses NYI"; // return new SubclassSerializer(ctors);
+  })();
 
-export function Property(ctor?: Constructor<any>) {
   return (target: any, key: string) => {
-    createMetadata(target).properties[key] = { ctor };
+    getMetadata(target).properties[key] = { serializer };
   };
 }
 
-export function serialize(target: any): any {
-  if (typeof target === "number") return target;
-  if (Array.isArray(target)) return target.map(serialize);
-
-  const properties = getMetadata(target)?.properties;
-  // return raw objects if no serialization metadata
-  if (!properties) return target;
-
-  return Object.fromEntries(
-    Object.entries(target)
-      .filter(([k]) => Object.keys(properties).includes(k))
-      .map(([k, v]) => [k, getMetadata(v) ? serialize(v) : v]),
-  );
+export interface Serializer<T> {
+  serialize(obj: T): any;
+  deserialize(obj: any): T;
 }
 
-/*
- * Deserializes an object from data using the given constructor.
- * If the field has serialization metadata (i.e. the class definition
- * contains a Property annotation) the attached constructor will be
- * used to deserialize the value separately.
- */
-export function deserialize<T>(data: any, ctor: Constructor<T>): T {
-  const obj = new ctor() as any;
-  const properties = getMetadata(obj)?.properties;
-  Object.entries(data).forEach(([k, v]) => {
-    const ctor = properties?.[k]?.ctor;
-    obj[k] = ctor ? deserialize(v, ctor) : v;
-  });
-  obj?.load();
-  return obj as T;
+export const DefaultSerializer: Serializer<any> = {
+  serialize,
+  deserialize,
+};
+
+export class ClassSerializer<T> implements Serializer<T> {
+  constructor(private readonly ctor: Constructor<T>) { }
+
+  serialize(obj: T): any {
+    return serialize(obj);
+  }
+
+  deserialize(obj: any): T {
+    return deserialize(obj, this.ctor);
+  }
+}
+
+export interface SubclassSerializer extends Serializer<any> {
+  constructor: (...ctors: Constructor<any>[]) => SubclassSerializer;
+}
+
+export function serialize(obj: any): any {
+  // handle primitives
+  if (isPrimitive(obj)) return obj;
+  if (typeof obj === "function") return undefined; // don't even bother serializing functions
+  if (Array.isArray(obj)) return obj.map((e) => serialize(e));
+
+  const properties: Record<string, PropertyData> = obj.metadata?.properties;
+  if (!properties) return { ...obj }; // no special serialization
+  const res: any = {};
+  for (const [k, v] of Object.entries(obj)) {
+    const propertyData = properties[k];
+    if (!propertyData) continue;
+    res[k] = propertyData.serializer.serialize(v);
+  }
+
+  return res;
+}
+
+export function deserialize<T>(data: any, ctor?: Constructor<T>): T {
+  if (!ctor) return data;
+
+  const res = new ctor() as any;
+  const properties = res.metadata?.properties;
+  for (const [k, v] of Object.entries(data)) {
+    const propertyData: PropertyData = properties?.[k];
+    res[k] = propertyData ? propertyData.serializer.deserialize(v) : v;
+  }
+
+  res?.load();
+
+  return res;
 }
