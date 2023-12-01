@@ -1,4 +1,7 @@
 export type Optional<T> = T | undefined;
+export interface Loadable {
+  load: () => void;
+}
 
 export function construct<K extends string, V>(
   keys: readonly K[],
@@ -12,4 +15,20 @@ export function construct<K extends string, V>(
 
 export function notEmpty<T>(value: T | null | undefined): value is T {
   return value !== null && value !== undefined;
+}
+
+export function isPrimitive(val: any): boolean {
+  return val !== Object(val);
+}
+
+export function hash(str: string): number {
+  let res = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    const code = str.charCodeAt(i);
+    res = (res << 5) - res + code;
+    res = res & res;
+  }
+
+  return Math.abs(res);
 }
