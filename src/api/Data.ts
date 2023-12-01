@@ -19,7 +19,7 @@ export function Property(...ctors: Constructor<any>[]) {
   const serializer: Serializer<any> = (() => {
     if (ctors.length === 0) return DefaultSerializer;
     else if (ctors.length === 1) return new ClassSerializer(ctors[0]);
-    else throw "Subclasses NYI"; // return new SubclassSerializer(ctors);
+    else return new SubclassSerializer(...ctors);
   })();
 
   return (target: any, key: string) => {
@@ -49,8 +49,48 @@ export class ClassSerializer<T> implements Serializer<T> {
   }
 }
 
-export interface SubclassSerializer extends Serializer<any> {
-  constructor: (...ctors: Constructor<any>[]) => SubclassSerializer;
+class TypeMap<T> {
+  private readonly map: Record<string, Constructor<T>[]> = {};
+
+  add(ctor: Constructor<T>) {
+    if (!this.map[ctor.name]) this.map[ctor.name] = [];
+    const ctors = this.map[ctor.name];
+    if (!ctors.includes(ctor)) ctors.push(ctor);
+  }
+
+  hash(ctor: Constructor<T>): string | undefined {
+    const ctors = this.map[ctor.name];
+    if (!ctors) return undefined;
+    const index = ctors.findIndex((i) => i == ctor);
+    return ctor.name + (ctors.length <= 1 ? "" : `@${index + 1}`);
+  }
+
+  get(hash: string): Constructor<T> {
+    const [name, index] = hash.split("@");
+    return this.map[name][typeof index === "number" ? parseInt(index) - 1 : 0];
+  }
+}
+
+export class SubclassSerializer<T extends object> implements Serializer<T> {
+  private typeMap = new TypeMap<T>();
+
+  constructor(...ctors: Constructor<any>[]) {
+    ctors.forEach((ctor) => this.typeMap.add(ctor));
+  }
+
+  serialize(obj: T): any {
+    const res = serialize(obj);
+    const id = this.typeMap.hash(obj.constructor as any);
+    res["_id"] = id;
+    return res;
+  }
+
+  deserialize(obj: any): T {
+    const id = obj["_id"];
+    if (!id) throw "Missing Id Deserializing Subclass";
+    delete obj["_id"];
+    return deserialize(obj, this.typeMap.get(id));
+  }
 }
 
 export function serialize(obj: any): any {
@@ -65,7 +105,11 @@ export function serialize(obj: any): any {
   for (const [k, v] of Object.entries(obj)) {
     const propertyData = properties[k];
     if (!propertyData) continue;
-    res[k] = propertyData.serializer.serialize(v);
+
+    const serializer = propertyData.serializer;
+    res[k] = Array.isArray(v)
+      ? v.map(serializer.serialize.bind(serializer))
+      : serializer.serialize(v);
   }
 
   return res;
@@ -78,10 +122,18 @@ export function deserialize<T>(data: any, ctor?: Constructor<T>): T {
   const properties = res.metadata?.properties;
   for (const [k, v] of Object.entries(data)) {
     const propertyData: PropertyData = properties?.[k];
-    res[k] = propertyData ? propertyData.serializer.deserialize(v) : v;
+    if (!propertyData) {
+      res[k] = v;
+      continue;
+    }
+
+    const serializer = propertyData.serializer;
+    res[k] = Array.isArray(v)
+      ? v.map(serializer.deserialize.bind(serializer))
+      : serializer.deserialize(v);
   }
 
-  res?.load();
+  res?.load?.();
 
   return res;
 }

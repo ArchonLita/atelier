@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
 import { Constructor, Property, deserialize, serialize } from "./Data";
 import { Loadable } from "./Util";
+import { TestSubclass1 as DuplicateSubclass } from "./Data2.test";
 
 export function testSerialization<T>(obj: T, data: any, ctor: Constructor<T>) {
   const ser = serialize(obj);
@@ -70,30 +71,64 @@ class TestSubclass3 {
   baz?: object;
 }
 
-type TestSubclass = TestSubclass1 | TestSubclass2 | TestSubclass3;
-const SubclassTypes = [TestSubclass1, TestSubclass2, TestSubclass3];
+const Subclasses = [
+  TestSubclass1,
+  TestSubclass2,
+  TestSubclass3,
+  DuplicateSubclass,
+];
+type TestSubclass =
+  | TestSubclass1
+  | TestSubclass2
+  | TestSubclass3
+  | DuplicateSubclass;
 class TestSubclassWrapper {
-  @Property(...SubclassTypes)
+  @Property(...Subclasses)
   objs: TestSubclass[] = [];
 }
 
-// test("serialize subclasses", () => {
-//   const obj = new TestSubclassWrapper();
-//   let newSubclass;
-//
-//   newSubclass = new TestSubclass1();
-//   newSubclass.foo = 5;
-//   obj.objs.push(newSubclass);
-//
-//   newSubclass = new TestSubclass2();
-//   newSubclass.bar = "test";
-//   obj.objs.push(newSubclass);
-//
-//   newSubclass = new TestSubclass3();
-//   newSubclass.baz = {
-//     asdf: "asdf",
-//   };
-//   obj.objs.push(newSubclass);
-//
-//   testSerialization(obj, {}, TestSubclassWrapper);
-// });
+test("serialize subclasses", () => {
+  const obj = new TestSubclassWrapper();
+  let newSubclass;
+
+  newSubclass = new TestSubclass1();
+  newSubclass.foo = 5;
+  obj.objs.push(newSubclass);
+
+  newSubclass = new TestSubclass2();
+  newSubclass.bar = "test";
+  obj.objs.push(newSubclass);
+
+  newSubclass = new TestSubclass3();
+  newSubclass.baz = {
+    asdf: "asdf",
+  };
+  obj.objs.push(newSubclass);
+
+  newSubclass = new DuplicateSubclass();
+  newSubclass.fizz = "buzz";
+  obj.objs.push(newSubclass);
+
+  const expected = {
+    objs: [
+      {
+        _id: "TestSubclass1@1",
+        foo: 5,
+      },
+      {
+        _id: "TestSubclass2",
+        bar: "test",
+      },
+      {
+        _id: "TestSubclass3",
+        baz: { asdf: "asdf" },
+      },
+      {
+        _id: "TestSubclass1@2",
+        fizz: "buzz",
+      },
+    ],
+  };
+
+  testSerialization(obj, expected, TestSubclassWrapper);
+});

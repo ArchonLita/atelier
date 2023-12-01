@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 import { Sheet } from "../../../dnd/Sheet";
 import { Elf } from "./Elf";
-import { deserialize, serialize } from "../../../api/Data";
+import { testSerialization } from "../../../api/Data.test";
 
 const baseAbilityScores = {
   strength: 8,
@@ -26,9 +26,19 @@ test("create elf", () => {
 
 test("serialize elf", () => {
   const elf = new Elf();
-  const data = serialize(elf);
-  console.log(data);
+  const expected = {
+    traits: [
+      {
+        _id: "KeenSenses",
+      },
+      {
+        _id: "FeyAncestry",
+      },
+      {
+        _id: "Trance",
+      },
+    ],
+  };
 
-  const res = deserialize(data, Elf);
-  console.log(res);
+  testSerialization(elf, expected, Elf);
 });

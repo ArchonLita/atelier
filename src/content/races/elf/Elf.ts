@@ -15,8 +15,10 @@ export class Trance implements Trait {
   //TODO long rest duration 4h
 }
 
+const ElfTraits = [KeenSenses, FeyAncestry, Trance];
+
 export class Elf implements Race {
-  @Property(KeenSenses, FeyAncestry, Trance)
+  @Property(...ElfTraits)
   traits: Trait[] = [new KeenSenses(), new FeyAncestry(), new Trance()];
 
   @Subscribe(LoadModifiersEvent)
