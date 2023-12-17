@@ -1,0 +1,11 @@
+{
+  "baseAbilityScores": {
+    "strength": 8,
+    "wisdom": 10,
+    "charisma": 12,
+    "dexterity": 13,
+    "constitution": 14,
+    "intelligence": 15
+  },
+  "feats": []
+}
