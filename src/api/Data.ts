@@ -38,7 +38,7 @@ export const DefaultSerializer: Serializer<any> = {
 };
 
 export class ClassSerializer<T> implements Serializer<T> {
-  constructor(private readonly ctor: Constructor<T>) { }
+  constructor(private readonly ctor: Constructor<T>) {}
 
   serialize(obj: T): any {
     return serialize(obj);

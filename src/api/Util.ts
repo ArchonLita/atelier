@@ -1,3 +1,5 @@
+import { exists, mkdir } from "fs/promises";
+
 export type Optional<T> = T | undefined;
 export interface Loadable {
   load: () => void;
@@ -31,4 +33,8 @@ export function hash(str: string): number {
   }
 
   return Math.abs(res);
+}
+
+export async function generateDir(path: string) {
+  if (!(await exists(path))) await mkdir(path);
 }
