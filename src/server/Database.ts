@@ -27,6 +27,10 @@ export class Schema<T> {
     return id;
   }
 
+  list(): string[] {
+    return Object.keys(this.data);
+  }
+
   async save() {
     await generateDir(this.path);
     await Promise.all(
@@ -69,5 +73,10 @@ export class Database {
   }
 }
 
-export const db = new Database("./data");
+export let db = new Database("./data");
 await db.load();
+
+export async function setDatabasePath(path: string) {
+  db = new Database(path);
+  await db.load();
+}

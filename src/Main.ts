@@ -1,7 +1,6 @@
 import { Sheet } from "./dnd/Sheet";
-import { Resilient } from "./content/feats/Resilient";
-import { Abilities } from "./dnd/Stats";
-import { Elf } from "./content/races/elf/Elf";
+import { db } from "./server/Database";
+import Server from "./server/Server";
 
 const sheet = new Sheet();
 sheet.baseAbilityScores = {
@@ -12,15 +11,14 @@ sheet.baseAbilityScores = {
   wisdom: 12,
   charisma: 10,
 };
-sheet.addFeat(new Resilient("intelligence"));
-sheet.setRace(new Elf());
 sheet.load();
 
-console.log(sheet.feats);
+db.load();
 
-console.log("-=-=- Starting Score -=-=-");
-for (const ability of Abilities) {
-  const score = sheet.abilityScores[ability];
-  const mod = sheet.abilityModifiers[ability];
-  console.log(`${ability}: ${mod >= 0 ? "+" : ""}${mod} (${score})`);
-}
+Server.listen({ port: 8080 }, (err, address) => {
+  if (err) {
+    console.error(err);
+    process.exit(1);
+  }
+  console.log(`Server listening at ${address}`);
+});
