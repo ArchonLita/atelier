@@ -1,7 +1,7 @@
 import Elysia from "elysia";
 import { Database } from "./Database";
 
-export class App extends Elysia {
+export class Server extends Elysia {
   constructor(db: Database) {
     super();
 
