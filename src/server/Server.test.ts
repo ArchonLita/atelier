@@ -1,16 +1,15 @@
 import { expect, test } from "bun:test";
-import { db, setDatabasePath } from "./Database";
-import server from "./Server";
-import { AddressInfo } from "net";
+import { Database } from "./Database";
+import { App } from "./Server";
 
-setDatabasePath("./test");
-db.load();
+const db = new Database("./test");
+const app = new App(db);
 
-await server.listen();
-const addr: AddressInfo = server.server.address() as any;
+await db.load();
 
 async function get(endpoint: string) {
-  return await fetch(`http://localhost:${addr.port}${endpoint}`);
+  const req = new Request(`http://localhost${endpoint}`);
+  return await app.handle(req);
 }
 
 test("Lists character sheets", async () => {

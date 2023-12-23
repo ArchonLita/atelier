@@ -1,15 +1,11 @@
-import fastify from "fastify";
-import { db } from "./Database";
+import Elysia from "elysia";
+import { Database } from "./Database";
 
-const server = fastify();
+export class App extends Elysia {
+  constructor(db: Database) {
+    super();
 
-server.get("/api/sheets", (_, reply) => {
-  reply.send(db.sheets.list());
-});
-
-server.get("/api/sheets/:id", (request, reply) => {
-  const { id } = request.params as any;
-  reply.send(db.sheets.get(id));
-});
-
-export default server;
+    this.get("/api/sheets", () => db.sheets.list());
+    this.get("/api/sheets/:id", ({ params: { id } }) => db.sheets.get(id));
+  }
+}
