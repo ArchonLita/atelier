@@ -3,6 +3,8 @@ import { Sheet } from "../dnd/Sheet";
 import { Database } from "./Database";
 import { Glob } from "bun";
 
+const db = new Database(process.env.DB_PATH);
+
 const baseAbilityScores = {
   strength: 8,
   wisdom: 10,
@@ -13,7 +15,6 @@ const baseAbilityScores = {
 };
 
 const id = "TEST-SHEET";
-const db = new Database("./test");
 
 test("Writes sheets to file database", async () => {
   const sheet = new Sheet();

@@ -1,9 +1,9 @@
 import { expect, test } from "bun:test";
 import { Database } from "./Database";
-import { App } from "./Server";
+import { Server } from "./Server";
 
-const db = new Database("./test");
-const app = new App(db);
+const db = new Database(process.env.DB_PATH);
+const app = new Server(db);
 
 await db.load();
 

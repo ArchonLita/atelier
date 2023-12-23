@@ -1,6 +1,6 @@
 import { Sheet } from "./dnd/Sheet";
-import { db } from "./server/Database";
-import Server from "./server/Server";
+import { Database } from "./server/Database";
+import { Server } from "./server/Server";
 
 const sheet = new Sheet();
 sheet.baseAbilityScores = {
@@ -13,8 +13,10 @@ sheet.baseAbilityScores = {
 };
 sheet.load();
 
-db.load();
+const db = new Database(process.env.DB_PATH);
+const server = new Server(db);
 
-Server.listen(8080, ({ hostname, port }) => {
+await db.load();
+server.listen(process.env.SERVER_PORT, ({ hostname, port }) => {
   console.log(`Server listening at ${hostname}:${port}`);
 });
