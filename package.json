@@ -11,14 +11,15 @@
     "@types/node": "^20.6.0"
   },
   "scripts": {
-    "start": "bun run src/Main.ts",
-    "dev": "bun run --watch src/Main.ts",
-    "build": "bun build --target=bun --outdir=out ./src/Main.ts ",
-    "format": "bun run prettier . --write",
+    "start": "bun src/Main.ts",
+    "dev": "bun --watch src/Main.ts",
+    "build": "bun build --target=bun --outdir=out ./src/Main.ts",
+    "test": "bun test",
+    "format": "bun prettier . --write",
     "lint": "bun eslint . --ext .ts"
   },
   "type": "module",
   "dependencies": {
-    "fastify": "^4.25.1"
+    "elysia": "^0.7.30"
   }
 }

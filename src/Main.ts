@@ -15,10 +15,6 @@ sheet.load();
 
 db.load();
 
-Server.listen({ port: 8080 }, (err, address) => {
-  if (err) {
-    console.error(err);
-    process.exit(1);
-  }
-  console.log(`Server listening at ${address}`);
+Server.listen(8080, ({ hostname, port }) => {
+  console.log(`Server listening at ${hostname}:${port}`);
 });

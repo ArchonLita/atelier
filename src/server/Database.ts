@@ -64,19 +64,11 @@ export class Database {
 
   async load() {
     await generateDir(this.path);
-    this.sheets.load();
+    await this.sheets.load();
   }
 
   async save() {
     await generateDir(this.path);
-    this.sheets.save();
+    await this.sheets.save();
   }
-}
-
-export let db = new Database("./data");
-await db.load();
-
-export async function setDatabasePath(path: string) {
-  db = new Database(path);
-  await db.load();
 }
