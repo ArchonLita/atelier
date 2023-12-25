@@ -1,7 +1,13 @@
 import { expect, test } from "bun:test";
-import { Constructor, Property, deserialize, serialize } from "./Data";
+import {
+  Constructor,
+  Property,
+  Register,
+  TypeMap,
+  deserialize,
+  serialize,
+} from "./Data";
 import { Loadable } from "./Util";
-import { TestSubclass1 as DuplicateSubclass } from "./Data2.test";
 
 export function testSerialization<T>(obj: T, data: any, ctor: Constructor<T>) {
   const ser = serialize(obj);
@@ -21,18 +27,8 @@ class TestClass implements Loadable {
   }
 }
 
-test("serializes objects from class", () => {
-  const testObj = new TestClass();
-  testObj.foo = 5;
-  testObj.load();
-
-  const data = { foo: 5 };
-
-  testSerialization(testObj, data, TestClass);
-});
-
 class TestWrapper implements Loadable {
-  @Property(TestClass)
+  @Property([TestClass])
   data?: TestClass;
   foo?: number;
   bar?: number;
@@ -42,6 +38,16 @@ class TestWrapper implements Loadable {
     this.bar = this.data?.bar;
   }
 }
+
+test("serializes objects from class", () => {
+  const testObj = new TestClass();
+  testObj.foo = 5;
+  testObj.load();
+
+  const data = { foo: 5 };
+
+  testSerialization(testObj, data, TestClass);
+});
 
 test("serialize nested objects", () => {
   const testObj = new TestClass();
@@ -56,38 +62,47 @@ test("serialize nested objects", () => {
   testSerialization(testWrapper, data, TestWrapper);
 });
 
-class TestSubclass1 {
-  @Property()
-  foo?: number;
-}
+test("register subclasses", () => {
+  interface Subclass {}
+  const Subclasses = new TypeMap<Subclass>();
 
-class TestSubclass2 {
-  @Property()
-  bar?: string;
-}
+  @Register(Subclasses)
+  class Subclass1 implements Subclass {}
+  @Register(Subclasses)
+  class Subclass2 implements Subclass {}
+  @Register(Subclasses)
+  class Subclass3 implements Subclass {}
 
-class TestSubclass3 {
-  @Property()
-  baz?: object;
-}
-
-const Subclasses = [
-  TestSubclass1,
-  TestSubclass2,
-  TestSubclass3,
-  DuplicateSubclass,
-];
-type TestSubclass =
-  | TestSubclass1
-  | TestSubclass2
-  | TestSubclass3
-  | DuplicateSubclass;
-class TestSubclassWrapper {
-  @Property(...Subclasses)
-  objs: TestSubclass[] = [];
-}
+  expect(Subclasses).toEqual(new TypeMap(Subclass1, Subclass2, Subclass3));
+});
 
 test("serialize subclasses", () => {
+  interface Subclass {}
+  const Subclasses = new TypeMap<Subclass>();
+
+  class TestSubclassWrapper {
+    @Property(Subclasses)
+    objs: Subclass[] = [];
+  }
+
+  @Register(Subclasses)
+  class TestSubclass1 {
+    @Property()
+    foo?: number;
+  }
+
+  @Register(Subclasses)
+  class TestSubclass2 {
+    @Property()
+    bar?: string;
+  }
+
+  @Register(Subclasses)
+  class TestSubclass3 {
+    @Property()
+    baz?: object;
+  }
+
   const obj = new TestSubclassWrapper();
   let newSubclass;
 
@@ -105,9 +120,17 @@ test("serialize subclasses", () => {
   };
   obj.objs.push(newSubclass);
 
-  newSubclass = new DuplicateSubclass();
-  newSubclass.fizz = "buzz";
-  obj.objs.push(newSubclass);
+  {
+    @Register(Subclasses)
+    class TestSubclass1 {
+      @Property()
+      fizz?: "buzz";
+    }
+
+    newSubclass = new TestSubclass1();
+    newSubclass.fizz = "buzz";
+    obj.objs.push(newSubclass);
+  }
 
   const expected = {
     objs: [

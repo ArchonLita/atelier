@@ -2,6 +2,38 @@ import { isPrimitive } from "./Util";
 
 export type Constructor<T> = new () => T;
 
+export class TypeMap<T> {
+  private readonly map: Record<string, Constructor<T>[]> = {};
+
+  constructor(...ctors: Constructor<T>[]) {
+    ctors.forEach((ctor) => this.add(ctor));
+  }
+
+  add(ctor: Constructor<T>) {
+    if (!this.map[ctor.name]) this.map[ctor.name] = [];
+    const ctors = this.map[ctor.name];
+    if (!ctors.includes(ctor)) ctors.push(ctor);
+  }
+
+  hash(ctor: Constructor<T>): string | undefined {
+    const ctors = this.map[ctor.name];
+    if (!ctors) return undefined;
+    const index = ctors.findIndex((i) => i == ctor);
+    return ctor.name + (ctors.length <= 1 ? "" : `@${index + 1}`);
+  }
+
+  get(hash: string): Constructor<T> {
+    const [name, index] = hash.split("@");
+    return this.map[name][typeof index === "number" ? parseInt(index) - 1 : 0];
+  }
+}
+
+export function Register<T>(typeMap: TypeMap<T>) {
+  return (ctor: Constructor<T>) => {
+    typeMap.add(ctor);
+  };
+}
+
 interface PropertyData {
   serializer: Serializer<any>;
 }
@@ -15,11 +47,17 @@ function getMetadata(target: any): Metadata {
   return target.metadata ?? (target.metadata = { properties: {} });
 }
 
-export function Property(...ctors: Constructor<any>[]) {
-  const serializer: Serializer<any> = (() => {
-    if (ctors.length === 0) return DefaultSerializer;
-    else if (ctors.length === 1) return new ClassSerializer(ctors[0]);
-    else return new SubclassSerializer(...ctors);
+export function Property<T extends object>(
+  ctors?: Constructor<T>[] | TypeMap<T>,
+) {
+  const serializer: Serializer<T> = (() => {
+    if (!ctors) return DefaultSerializer;
+
+    if (Array.isArray(ctors)) {
+      if (ctors.length === 0) return DefaultSerializer;
+      if (ctors.length === 1) return new ClassSerializer(ctors[0]);
+    }
+    return new SubclassSerializer(ctors);
   })();
 
   return (target: any, key: string) => {
@@ -49,33 +87,12 @@ export class ClassSerializer<T> implements Serializer<T> {
   }
 }
 
-class TypeMap<T> {
-  private readonly map: Record<string, Constructor<T>[]> = {};
-
-  add(ctor: Constructor<T>) {
-    if (!this.map[ctor.name]) this.map[ctor.name] = [];
-    const ctors = this.map[ctor.name];
-    if (!ctors.includes(ctor)) ctors.push(ctor);
-  }
-
-  hash(ctor: Constructor<T>): string | undefined {
-    const ctors = this.map[ctor.name];
-    if (!ctors) return undefined;
-    const index = ctors.findIndex((i) => i == ctor);
-    return ctor.name + (ctors.length <= 1 ? "" : `@${index + 1}`);
-  }
-
-  get(hash: string): Constructor<T> {
-    const [name, index] = hash.split("@");
-    return this.map[name][typeof index === "number" ? parseInt(index) - 1 : 0];
-  }
-}
-
 export class SubclassSerializer<T extends object> implements Serializer<T> {
   private typeMap = new TypeMap<T>();
 
-  constructor(...ctors: Constructor<any>[]) {
-    ctors.forEach((ctor) => this.typeMap.add(ctor));
+  constructor(ctors: Constructor<T>[] | TypeMap<T>) {
+    if (Array.isArray(ctors)) ctors.forEach((ctor) => this.typeMap.add(ctor));
+    else this.typeMap = ctors;
   }
 
   serialize(obj: T): any {
