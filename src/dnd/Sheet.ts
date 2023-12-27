@@ -10,12 +10,23 @@ import {
   applyEffects,
 } from "./Stats";
 
+// Random Constructs
+
 export interface Feat {}
 
 export interface Trait {}
 
 export interface Race {
   traits: Trait[];
+}
+
+export interface Feature {}
+
+export interface Class {
+  level: number;
+  features: Feature[];
+
+  levelUp: () => void;
 }
 
 // Character Sheet
@@ -37,6 +48,7 @@ export class Sheet extends Emitter {
     this.clearHandlers();
     this.addListeners(this, ...this.feats);
     if (this.race) this.addListeners(this.race, ...this.race.traits);
+    if (this.clazz) this.addListeners(this.clazz, ...this.clazz.features);
 
     this.loadBaseAbilityScores();
     this.call(LoadModifiersEvent, this.modifiers);
@@ -45,6 +57,7 @@ export class Sheet extends Emitter {
 
   @Property()
   baseAbilityScores = construct(Abilities, 0);
+
   abilityScores = construct(Abilities, 0);
   abilityModifiers = construct(Abilities, 0);
   skillScores = construct(Skills, 0);
@@ -102,4 +115,8 @@ export class Sheet extends Emitter {
   // TODO register all races here
   @Property()
   race?: Race;
+
+  // TODO ignore multiclassing for now (magic is hard)
+  @Property()
+  clazz?: Class;
 }

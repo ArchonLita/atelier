@@ -1,17 +1,9 @@
 import { test, expect } from "bun:test";
-import { Sheet } from "../../dnd/Sheet";
 import { Resilient } from "./Resilient";
+import { SheetWithBaseScores } from "../test/TestCharacters.test";
 
 test("create sheet with Resilient", () => {
-  const sheet = new Sheet();
-  sheet.baseAbilityScores = {
-    strength: 8,
-    dexterity: 15,
-    constitution: 13,
-    intelligence: 15,
-    wisdom: 12,
-    charisma: 10,
-  };
+  const sheet = SheetWithBaseScores();
   sheet.feats.push(new Resilient("dexterity"));
   sheet.load();
 
