@@ -26,10 +26,11 @@ export interface Class {
   level: number;
   features: Feature[];
 
-  levelUp: () => void;
+  levelUp: (sheet: Sheet) => void;
 }
 
 // Character Sheet
+
 export const LoadAbilityScoresEvent = createEvent<Sheet>();
 export const LoadAbilityModifiersEvent = createEvent<Sheet>();
 export const LoadSkillScoresEvent = createEvent<Sheet>();
@@ -46,6 +47,8 @@ export class Sheet extends Emitter {
 
   load() {
     this.clearHandlers();
+    this.modifiers = [];
+
     this.addListeners(this, ...this.feats);
     if (this.race) this.addListeners(this.race, ...this.race.traits);
     if (this.clazz) this.addListeners(this.clazz, ...this.clazz.features);
@@ -64,6 +67,10 @@ export class Sheet extends Emitter {
   skillModifiers = construct(Skills, 0);
 
   speed = 0;
+
+  @Property()
+  hitPoints: number = 0;
+  maxHitPoints: number = 0;
 
   modifiers: Effect[] = [];
 
@@ -92,6 +99,7 @@ export class Sheet extends Emitter {
         (this.abilityScores[ability] - 10) / 2,
       );
     }
+
     for (const ability of Abilities) {
       for (const skill of AbilitySkills[ability]) {
         this.skillScores[skill] = applyEffects(
@@ -105,6 +113,12 @@ export class Sheet extends Emitter {
         );
       }
     }
+
+    this.maxHitPoints = applyEffects(
+      0,
+      this.modifiers,
+      Effects.filter("max_hit_points"),
+    );
 
     this.speed = applyEffects(0, this.modifiers, Effects.filter("speed"));
   }

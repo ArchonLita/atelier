@@ -41,8 +41,18 @@ export const AbilitySkills: {
   charisma: ["deception", "intimidation", "performance", "persuasion"],
 };
 
-export const Attributes = ["speed", "armor_class", "initiative"];
+export const Attributes = [
+  "max_hit_points",
+  "speed",
+  "armor_class",
+  "initiative",
+];
 export type Attribute = (typeof Attributes)[number];
+
+export interface HitDice {
+  value: number;
+  hitPoints: number;
+}
 
 type TargetMap = {
   ["ability_score"]: Ability;
