@@ -12,7 +12,7 @@ test("create sheet with Resilient", () => {
     wisdom: 12,
     charisma: 10,
   };
-  sheet.addFeat(new Resilient("dexterity"));
+  sheet.feats.push(new Resilient("dexterity"));
   sheet.load();
 
   expect(sheet.abilityScores.dexterity).toEqual(

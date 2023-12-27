@@ -30,11 +30,14 @@ export class Sheet extends Emitter {
   constructor() {
     super();
 
-    this.addListener(this);
     this.load();
   }
 
   load() {
+    this.clearHandlers();
+    this.addListeners(this, ...this.feats);
+    if (this.race) this.addListeners(this.race, ...this.race.traits);
+
     this.loadBaseAbilityScores();
     this.call(LoadModifiersEvent, this.modifiers);
     this.loadAttributes();
@@ -96,18 +99,7 @@ export class Sheet extends Emitter {
   @Property()
   feats: Feat[] = [];
 
-  addFeat(feat: Feat) {
-    this.feats.push(feat);
-    this.addListener(feat);
-  }
-
   // TODO register all races here
   @Property()
   race?: Race;
-
-  setRace(race: Race) {
-    this.race = race;
-    this.addListener(race);
-    this.addListeners(...race.traits);
-  }
 }

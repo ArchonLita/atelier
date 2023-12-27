@@ -15,7 +15,7 @@ const baseAbilityScores = {
 test("create elf", () => {
   const sheet = new Sheet();
   sheet.baseAbilityScores = baseAbilityScores;
-  sheet.setRace(new Elf());
+  sheet.race = new Elf();
   sheet.load();
 
   expect(sheet.speed).toEqual(30);

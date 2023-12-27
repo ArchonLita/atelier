@@ -72,6 +72,10 @@ export class Emitter {
     return handlers.length === this.handlers.get(event)!.length;
   }
 
+  clearHandlers() {
+    this.handlers.clear();
+  }
+
   addListener(listener: Listener) {
     for (const label of Object.getOwnPropertyNames(
       Object.getPrototypeOf(listener),
@@ -88,7 +92,7 @@ export class Emitter {
   }
 
   addListeners(...listeners: Listener[]) {
-    listeners.forEach(this.addListener.bind(this));
+    listeners.forEach((listener) => this.addListener(listener));
   }
 
   removeListener(listener: Listener) {
