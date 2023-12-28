@@ -53,6 +53,8 @@ export class Sheet extends Emitter {
     if (this.race) this.addListeners(this.race, ...this.race.traits);
     if (this.clazz) this.addListeners(this.clazz, ...this.clazz.features);
 
+    this.proficiencyBonus = Math.floor((this.clazz?.level ?? 0) / 4) + 2;
+
     this.loadBaseAbilityScores();
     this.call(LoadModifiersEvent, this.modifiers);
     this.loadAttributes();
@@ -63,8 +65,12 @@ export class Sheet extends Emitter {
 
   abilityScores = construct(Abilities, 0);
   abilityModifiers = construct(Abilities, 0);
+  savingProficiencies = construct(Abilities, false);
   skillScores = construct(Skills, 0);
   skillModifiers = construct(Skills, 0);
+  skillProficiencies = construct(Skills, false);
+
+  proficiencyBonus: number = 0;
 
   speed = 0;
 
@@ -92,12 +98,18 @@ export class Sheet extends Emitter {
       this.abilityScores[ability] = applyEffects(
         0,
         this.modifiers,
-        Effects.filter(ability),
+        Effects.filter("ability_score", ability),
       );
 
-      this.abilityModifiers[ability] = Math.floor(
-        (this.abilityScores[ability] - 10) / 2,
+      this.savingProficiencies[ability] = !!applyEffects(
+        0,
+        this.modifiers,
+        Effects.filter("saving_proficiency", ability),
       );
+
+      this.abilityModifiers[ability] =
+        Math.floor((this.abilityScores[ability] - 10) / 2) +
+        (this.savingProficiencies[ability] ? this.proficiencyBonus : 0);
     }
 
     for (const ability of Abilities) {
@@ -105,22 +117,32 @@ export class Sheet extends Emitter {
         this.skillScores[skill] = applyEffects(
           this.abilityScores[ability],
           this.modifiers,
-          Effects.filter(skill),
+          Effects.filter("skill_score", skill),
         );
 
-        this.skillModifiers[skill] = Math.floor(
-          (this.skillScores[skill] - 10) / 2,
+        this.skillProficiencies[skill] = !!applyEffects(
+          0,
+          this.modifiers,
+          Effects.filter("skill_proficiency", skill),
         );
+
+        this.skillModifiers[skill] =
+          Math.floor((this.skillScores[skill] - 10) / 2) +
+          (this.skillProficiencies[skill] ? this.proficiencyBonus : 0);
       }
     }
 
     this.maxHitPoints = applyEffects(
       0,
       this.modifiers,
-      Effects.filter("max_hit_points"),
+      Effects.filter("attribute", "max_hit_points"),
     );
 
-    this.speed = applyEffects(0, this.modifiers, Effects.filter("speed"));
+    this.speed = applyEffects(
+      0,
+      this.modifiers,
+      Effects.filter("attribute", "speed"),
+    );
   }
 
   @Property()

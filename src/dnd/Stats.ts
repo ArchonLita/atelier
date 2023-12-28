@@ -56,7 +56,9 @@ export interface HitDice {
 
 type TargetMap = {
   ["ability_score"]: Ability;
+  ["saving_proficiency"]: Ability;
   ["skill_score"]: Skill;
+  ["skill_proficiency"]: Skill;
   ["attribute"]: Attribute;
 };
 export type Target = keyof TargetMap;
@@ -64,6 +66,7 @@ export type Target = keyof TargetMap;
 type Operation = (a: number, b: number) => number;
 export namespace Operation {
   export const Addition: Operation = (a, b) => a + b;
+  export const Set: Operation = (_, a) => a;
 }
 
 export interface Effect<T extends Target = any> {
@@ -105,11 +108,17 @@ export namespace Effects {
     add("ability_score", ability, value, Operation.Addition);
   export const addSkillScore = (skill: Skill, value: number) =>
     add("skill_score", skill, value, Operation.Addition);
+
+  export const addAbilityProficiency = (ability: Ability) =>
+    add("saving_proficiency", ability, 1, Operation.Set);
+  export const addSkillProficiency = (skill: Skill) =>
+    add("skill_proficiency", skill, 1, Operation.Set);
+
   export const addAttribute = (attribute: Attribute, value: number) =>
     add("attribute", attribute, value, Operation.Addition);
 
   export const filter =
-    (key: any): EffectFilter =>
+    (type: Target, key: any): EffectFilter =>
     (e: Effect) =>
-      e.key === key;
+      e.type === type && e.key === key;
 }

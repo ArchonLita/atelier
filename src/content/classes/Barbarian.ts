@@ -6,7 +6,11 @@ import { Effect, Effects, HitDice } from "../../dnd/Stats";
 export class TestFeature implements Feature {}
 
 export class Barbarian implements Class {
+  @Property()
   level: number = 0;
+
+  //TODO serialize subclass
+  @Property()
   features: Feature[] = [];
 
   @Property()

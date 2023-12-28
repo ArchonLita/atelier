@@ -7,6 +7,6 @@ export class Resilient implements Feat {
 
   @Subscribe(LoadModifiersEvent)
   onLoadStats(modifiers: Effect[]) {
-    modifiers.push(Effects.addAbilityScore(this.ability, 1));
+    modifiers.push(Effects.addAbilityProficiency(this.ability));
   }
 }

@@ -25,3 +25,15 @@ test("add features on level up", () => {
   expect(sheet.clazz.level).toEqual(2);
   expect(sheet.clazz.features).toEqual([new TestFeature()]);
 });
+
+test("serialize barbarian class", () => {
+  const sheet = SheetWithBaseScores();
+  sheet.clazz = new Barbarian();
+  sheet.load();
+
+  sheet.clazz.levelUp(sheet);
+  sheet.load();
+
+  // TODO
+  // console.log(serialize(sheet.clazz));
+});
