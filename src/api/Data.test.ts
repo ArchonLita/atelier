@@ -28,7 +28,7 @@ class TestClass implements Loadable {
 }
 
 class TestWrapper implements Loadable {
-  @Property([TestClass])
+  @Property(TestClass)
   data?: TestClass;
   foo?: number;
   bar?: number;

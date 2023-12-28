@@ -31,10 +31,11 @@ test("constructs character sheets accurately", () => {
 
 test("serialize and deserialize character sheets", () => {
   const sheet = new Sheet();
+  sheet.name = "Mear";
   sheet.baseAbilityScores = baseAbilityScores;
   sheet.load();
 
-  const data = { baseAbilityScores, feats: [], hitPoints: 0 };
+  const data = { baseAbilityScores, feats: [], hitPoints: 0, name: "Mear" };
 
   testSerialization(sheet, data, Sheet);
 });

@@ -48,7 +48,7 @@ function getMetadata(target: any): Metadata {
 }
 
 export function Property<T extends object>(
-  ctors?: Constructor<T>[] | TypeMap<T>,
+  ctors?: Constructor<T> | Constructor<T>[] | TypeMap<T>,
 ) {
   const serializer: Serializer<T> = (() => {
     if (!ctors) return DefaultSerializer;
@@ -56,7 +56,10 @@ export function Property<T extends object>(
     if (Array.isArray(ctors)) {
       if (ctors.length === 0) return DefaultSerializer;
       if (ctors.length === 1) return new ClassSerializer(ctors[0]);
+    } else if (typeof ctors === "function") {
+      return new ClassSerializer(ctors);
     }
+
     return new SubclassSerializer(ctors);
   })();
 

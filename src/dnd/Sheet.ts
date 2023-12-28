@@ -45,6 +45,9 @@ export class Sheet extends Emitter {
     this.load();
   }
 
+  @Property()
+  name: string = "";
+
   load() {
     this.clearHandlers();
     this.modifiers = [];
@@ -65,8 +68,8 @@ export class Sheet extends Emitter {
 
   abilityScores = construct(Abilities, 0);
   abilityModifiers = construct(Abilities, 0);
+  savingModifiers = construct(Abilities, 0);
   savingProficiencies = construct(Abilities, false);
-  skillScores = construct(Skills, 0);
   skillModifiers = construct(Skills, 0);
   skillProficiencies = construct(Skills, false);
 
@@ -107,19 +110,17 @@ export class Sheet extends Emitter {
         Effects.filter("saving_proficiency", ability),
       );
 
-      this.abilityModifiers[ability] =
-        Math.floor((this.abilityScores[ability] - 10) / 2) +
+      this.abilityModifiers[ability] = Math.floor(
+        (this.abilityScores[ability] - 10) / 2,
+      );
+
+      this.savingModifiers[ability] =
+        this.abilityModifiers[ability] +
         (this.savingProficiencies[ability] ? this.proficiencyBonus : 0);
     }
 
     for (const ability of Abilities) {
       for (const skill of AbilitySkills[ability]) {
-        this.skillScores[skill] = applyEffects(
-          this.abilityScores[ability],
-          this.modifiers,
-          Effects.filter("skill_score", skill),
-        );
-
         this.skillProficiencies[skill] = !!applyEffects(
           0,
           this.modifiers,
@@ -127,7 +128,7 @@ export class Sheet extends Emitter {
         );
 
         this.skillModifiers[skill] =
-          Math.floor((this.skillScores[skill] - 10) / 2) +
+          this.abilityModifiers[ability] +
           (this.skillProficiencies[skill] ? this.proficiencyBonus : 0);
       }
     }
@@ -155,4 +156,32 @@ export class Sheet extends Emitter {
   // TODO ignore multiclassing for now (magic is hard)
   @Property()
   clazz?: Class;
+
+  displayInformation() {
+    console.log(`-=-=- ${this.name} -=-=-`);
+
+    console.log("-=-=- Abilities -=-=-");
+    for (const ability of Abilities) {
+      const mod = this.abilityModifiers[ability];
+      const modSign = mod > 0 ? "+" : "";
+      const score = this.abilityScores[ability];
+      console.log(`${ability}: ${modSign}${mod} (${score})`);
+    }
+
+    console.log("-=-=- Saving -=-=-");
+    for (const ability of Abilities) {
+      const mod = this.savingModifiers[ability];
+      const modSign = mod > 0 ? "+" : "";
+      const prof = this.savingProficiencies[ability] ? "x" : " ";
+      console.log(`${ability}: ${modSign}${mod} [${prof}]`);
+    }
+
+    console.log("-=-=- Skills -=-=-");
+    for (const skill of Skills) {
+      const mod = this.skillModifiers[skill];
+      const modSign = mod > 0 ? "+" : "";
+      const prof = this.skillProficiencies[skill] ? "x" : " ";
+      console.log(`${skill}: ${modSign}${mod} [${prof}]`);
+    }
+  }
 }

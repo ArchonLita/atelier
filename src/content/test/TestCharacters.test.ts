@@ -1,7 +1,9 @@
 import { Sheet } from "../../dnd/Sheet";
+import { Barbarian } from "../classes/Barbarian";
 
 export function SheetWithBaseScores() {
   const sheet = new Sheet();
+  sheet.name = "Lita";
   sheet.baseAbilityScores = {
     strength: 8,
     dexterity: 15,
@@ -13,3 +15,31 @@ export function SheetWithBaseScores() {
 
   return sheet;
 }
+
+export function Petroff() {
+  const sheet = new Sheet();
+  sheet.name = "Petroff";
+
+  sheet.baseAbilityScores = {
+    strength: 15,
+    dexterity: 13,
+    constitution: 15,
+    intelligence: 8,
+    wisdom: 12,
+    charisma: 10,
+  };
+
+  const clazz = new Barbarian();
+  clazz.skillProficiencies.select(2);
+  clazz.skillProficiencies.select(4);
+  sheet.clazz = clazz;
+  clazz.levelUp(sheet);
+
+  return sheet;
+}
+
+// test("debug", () => {
+//   const sheet = Petroff();
+//   sheet.load();
+//   sheet.displayInformation();
+// });
