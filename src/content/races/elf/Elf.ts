@@ -18,7 +18,7 @@ export class Trance implements Trait {
 const ElfTraits = [KeenSenses, FeyAncestry, Trance];
 
 export class Elf implements Race {
-  @Property(...ElfTraits)
+  @Property(ElfTraits)
   traits: Trait[] = [new KeenSenses(), new FeyAncestry(), new Trance()];
 
   @Subscribe(LoadModifiersEvent)

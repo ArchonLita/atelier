@@ -1,21 +1,11 @@
 import { expect, test } from "bun:test";
-import { Sheet } from "../../../dnd/Sheet";
 import { Elf } from "./Elf";
 import { testSerialization } from "../../../api/Data.test";
-
-const baseAbilityScores = {
-  strength: 8,
-  dexterity: 15,
-  constitution: 13,
-  intelligence: 15,
-  wisdom: 12,
-  charisma: 10,
-};
+import { SheetWithBaseScores } from "../../test/TestCharacters.test";
 
 test("create elf", () => {
-  const sheet = new Sheet();
-  sheet.baseAbilityScores = baseAbilityScores;
-  sheet.setRace(new Elf());
+  const sheet = SheetWithBaseScores();
+  sheet.race = new Elf();
   sheet.load();
 
   expect(sheet.speed).toEqual(30);

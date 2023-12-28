@@ -1,21 +1,15 @@
 import { test, expect } from "bun:test";
-import { Sheet } from "../../dnd/Sheet";
 import { Resilient } from "./Resilient";
+import { SheetWithBaseScores } from "../test/TestCharacters.test";
 
 test("create sheet with Resilient", () => {
-  const sheet = new Sheet();
-  sheet.baseAbilityScores = {
-    strength: 8,
-    dexterity: 15,
-    constitution: 13,
-    intelligence: 15,
-    wisdom: 12,
-    charisma: 10,
-  };
-  sheet.addFeat(new Resilient("dexterity"));
+  const sheet = SheetWithBaseScores();
   sheet.load();
+  expect(sheet.savingModifiers.dexterity).toEqual(2);
+  expect(sheet.savingProficiencies.dexterity).toEqual(false);
 
-  expect(sheet.abilityScores.dexterity).toEqual(
-    sheet.baseAbilityScores.dexterity + 1,
-  );
+  sheet.feats.push(new Resilient("dexterity"));
+  sheet.load();
+  expect(sheet.savingModifiers.dexterity).toEqual(4);
+  expect(sheet.savingProficiencies.dexterity).toEqual(true);
 });

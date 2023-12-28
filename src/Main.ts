@@ -1,6 +1,9 @@
 import { Sheet } from "./dnd/Sheet";
 import { Database } from "./server/Database";
 import { Server } from "./server/Server";
+import { loadContent } from "./Env";
+
+await loadContent();
 
 const sheet = new Sheet();
 sheet.baseAbilityScores = {

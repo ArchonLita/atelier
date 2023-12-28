@@ -11,6 +11,11 @@ test("apply effects to a value", () => {
     Effects.addAttribute("speed", -30),
   ];
 
-  expect(applyEffects(0, effects, Effects.filter("wisdom"))).toEqual(9);
-  expect(applyEffects(0, effects, Effects.filter("speed"))).toEqual(-10);
+  expect(
+    applyEffects(0, effects, Effects.filter("ability_score", "wisdom")),
+  ).toEqual(9);
+
+  expect(
+    applyEffects(0, effects, Effects.filter("attribute", "speed")),
+  ).toEqual(-10);
 });

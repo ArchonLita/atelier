@@ -1,4 +1,5 @@
 {
+  "name": "",
   "baseAbilityScores": {
     "strength": 8,
     "wisdom": 10,
@@ -7,5 +8,6 @@
     "constitution": 14,
     "intelligence": 15
   },
+  "hitPoints": 0,
   "feats": []
 }
