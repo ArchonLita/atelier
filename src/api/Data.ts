@@ -146,7 +146,7 @@ export function deserialize<T>(data: any, ctor?: Constructor<T>): T {
 
     const serializer = propertyData.serializer;
     res[k] = Array.isArray(v)
-      ? v.map(serializer.deserialize.bind(serializer))
+      ? v.map((elem) => serializer.deserialize(elem))
       : serializer.deserialize(v);
   }
 
