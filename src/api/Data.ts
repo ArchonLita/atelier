@@ -26,6 +26,14 @@ export class TypeMap<T> {
     const [name, index] = hash.split("@");
     return this.map[name][typeof index === "number" ? parseInt(index) - 1 : 0];
   }
+
+  values() {
+    return Object.values(this.map);
+  }
+
+  size() {
+    return Object.keys(this.map).length;
+  }
 }
 
 export function Register<T>(typeMap: TypeMap<T>) {

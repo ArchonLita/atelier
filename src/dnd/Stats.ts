@@ -114,6 +114,8 @@ export namespace Effects {
   export const addSkillProficiency = (skill: Skill) =>
     add("skill_proficiency", skill, 1, Operation.Set);
 
+  export const setAttribute = (attribute: Attribute, value: number) =>
+    add("attribute", attribute, value, Operation.Set);
   export const addAttribute = (attribute: Attribute, value: number) =>
     add("attribute", attribute, value, Operation.Addition);
 
