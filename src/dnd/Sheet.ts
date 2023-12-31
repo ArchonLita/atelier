@@ -56,6 +56,7 @@ export class Sheet extends Emitter {
     this.addListeners(this, ...this.feats);
     if (this.race) this.addListeners(this.race, ...this.race.traits);
     if (this.clazz) this.addListeners(this.clazz, ...this.clazz.features);
+    if (this.armor) this.addListener(this.armor);
 
     this.proficiencyBonus = Math.floor((this.clazz?.level ?? 0) / 4) + 2;
 
@@ -167,6 +168,9 @@ export class Sheet extends Emitter {
 
   @Property(SRDEquipment)
   equipment: Equipment[] = [];
+
+  @Property(SRDEquipment)
+  armor?: Equipment;
 
   displayInformation() {
     console.log(`-=-=- ${this.name} -=-=-`);

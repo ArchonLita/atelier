@@ -1,6 +1,6 @@
-import { test } from "bun:test";
+import { expect, test } from "bun:test";
 import { PaddedArmor } from "../content/equipment/weapons/Armor";
-import { Property, serialize } from "../api/Data";
+import { Property } from "../api/Data";
 import { Equipment, SRDEquipment } from "./Equipment";
 import { testSerialization } from "../api/Data.test";
 import { SheetWithBaseScores } from "../content/test/TestCharacters.test";
@@ -26,7 +26,10 @@ test("serialize equipment", () => {
 
 test("apply equipment effects", () => {
   const sheet = SheetWithBaseScores();
-  sheet.equipment.push(new PaddedArmor());
+  sheet.load();
+  expect(sheet.armorClass).toEqual(12);
 
-  console.log(serialize(sheet));
+  sheet.armor = new PaddedArmor();
+  sheet.load();
+  expect(sheet.armorClass).toEqual(13);
 });
