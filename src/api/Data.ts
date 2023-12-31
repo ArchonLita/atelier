@@ -28,7 +28,7 @@ export class TypeMap<T> {
   }
 
   values() {
-    return Object.values(this.map);
+    return Object.values(this.map).flat();
   }
 
   size() {
@@ -74,6 +74,10 @@ export function Property<T extends object>(
   return (target: any, key: string) => {
     getMetadata(target).properties[key] = { serializer };
   };
+}
+
+export class Serialized {
+  metadata: Metadata = { properties: {} };
 }
 
 export interface Serializer<T> {
