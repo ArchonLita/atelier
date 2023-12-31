@@ -26,6 +26,14 @@ export class TypeMap<T> {
     const [name, index] = hash.split("@");
     return this.map[name][typeof index === "number" ? parseInt(index) - 1 : 0];
   }
+
+  values() {
+    return Object.values(this.map).flat();
+  }
+
+  size() {
+    return Object.keys(this.map).length;
+  }
 }
 
 export function Register<T>(typeMap: TypeMap<T>) {
@@ -123,6 +131,8 @@ export function serialize(obj: any): any {
   if (!properties) return { ...obj }; // no special serialization
   const res: any = {};
   for (const [k, v] of Object.entries(obj)) {
+    if (v === undefined) continue;
+
     const propertyData = properties[k];
     if (!propertyData) continue;
 

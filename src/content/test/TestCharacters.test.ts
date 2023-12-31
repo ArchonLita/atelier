@@ -16,7 +16,7 @@ export function SheetWithBaseScores() {
   return sheet;
 }
 
-export function Petroff() {
+export function SheetBarbarian() {
   const sheet = new Sheet();
   sheet.name = "Petroff";
 
@@ -39,7 +39,7 @@ export function Petroff() {
 }
 
 // test("debug", () => {
-//   const sheet = Petroff();
+//   const sheet = SheetBarbarian();
 //   sheet.load();
 //   sheet.displayInformation();
 // });

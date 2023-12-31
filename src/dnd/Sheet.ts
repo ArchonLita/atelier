@@ -1,6 +1,7 @@
 import { Property } from "../api/Data";
 import { Emitter, Subscribe, createEvent } from "../api/Event";
 import { construct } from "../api/Util";
+import { Equipment, SRDEquipment } from "./Equipment";
 import {
   Abilities,
   AbilitySkills,
@@ -30,12 +31,6 @@ export interface Class {
 }
 
 // Character Sheet
-
-export const LoadAbilityScoresEvent = createEvent<Sheet>();
-export const LoadAbilityModifiersEvent = createEvent<Sheet>();
-export const LoadSkillScoresEvent = createEvent<Sheet>();
-export const LoadSkillModifiersEvent = createEvent<Sheet>();
-
 export const LoadModifiersEvent = createEvent<Effect[]>();
 
 export class Sheet extends Emitter {
@@ -55,6 +50,7 @@ export class Sheet extends Emitter {
     this.addListeners(this, ...this.feats);
     if (this.race) this.addListeners(this.race, ...this.race.traits);
     if (this.clazz) this.addListeners(this.clazz, ...this.clazz.features);
+    if (this.armor) this.addListener(this.armor);
 
     this.proficiencyBonus = Math.floor((this.clazz?.level ?? 0) / 4) + 2;
 
@@ -76,6 +72,7 @@ export class Sheet extends Emitter {
   proficiencyBonus: number = 0;
 
   speed = 0;
+  armorClass = 0;
 
   @Property()
   hitPoints: number = 0;
@@ -89,11 +86,11 @@ export class Sheet extends Emitter {
   }
 
   loadBaseAbilityScores() {
-    for (const ability of Abilities) {
-      this.modifiers.push(
+    this.modifiers.push(
+      ...Abilities.map((ability) =>
         Effects.addAbilityScore(ability, this.baseAbilityScores[ability]),
-      );
-    }
+      ),
+    );
   }
 
   loadAttributes() {
@@ -104,14 +101,14 @@ export class Sheet extends Emitter {
         Effects.filter("ability_score", ability),
       );
 
+      this.abilityModifiers[ability] = Math.floor(
+        (this.abilityScores[ability] - 10) / 2,
+      );
+
       this.savingProficiencies[ability] = !!applyEffects(
         0,
         this.modifiers,
         Effects.filter("saving_proficiency", ability),
-      );
-
-      this.abilityModifiers[ability] = Math.floor(
-        (this.abilityScores[ability] - 10) / 2,
       );
 
       this.savingModifiers[ability] =
@@ -144,6 +141,12 @@ export class Sheet extends Emitter {
       this.modifiers,
       Effects.filter("attribute", "speed"),
     );
+
+    this.armorClass = applyEffects(
+      10 + this.abilityModifiers.dexterity,
+      this.modifiers,
+      Effects.filter("attribute", "armor_class"),
+    );
   }
 
   @Property()
@@ -156,6 +159,12 @@ export class Sheet extends Emitter {
   // TODO ignore multiclassing for now (magic is hard)
   @Property()
   clazz?: Class;
+
+  @Property(SRDEquipment)
+  equipment: Equipment[] = [];
+
+  @Property(SRDEquipment)
+  armor?: Equipment;
 
   displayInformation() {
     console.log(`-=-=- ${this.name} -=-=-`);

@@ -35,7 +35,13 @@ test("serialize and deserialize character sheets", () => {
   sheet.baseAbilityScores = baseAbilityScores;
   sheet.load();
 
-  const data = { baseAbilityScores, feats: [], hitPoints: 0, name: "Mear" };
+  const data = {
+    baseAbilityScores,
+    feats: [],
+    hitPoints: 0,
+    name: "Mear",
+    equipment: [],
+  };
 
   testSerialization(sheet, data, Sheet);
 });
