@@ -1,11 +1,11 @@
-import { Register, Serialized } from "../../../api/Data";
+import { Register } from "../../../api/Data";
 import { Subscribe } from "../../../api/Event";
 import { Equipment, SRDEquipment, toCoins } from "../../../dnd/Equipment";
 import { LoadModifiersEvent } from "../../../dnd/Sheet";
 import { Effect, Effects } from "../../../dnd/Stats";
 
 @Register(SRDEquipment)
-export class PaddedArmor extends Serialized implements Equipment {
+export class PaddedArmor extends Equipment {
   name = "Padded armor";
   cost = toCoins("5 gp");
   weight = 8;
@@ -17,7 +17,7 @@ export class PaddedArmor extends Serialized implements Equipment {
 }
 
 @Register(SRDEquipment)
-export class LeatherArmor extends Serialized implements Equipment {
+export class LeatherArmor extends Equipment {
   name = "Leather armor";
   cost = toCoins("10 gp");
   weight = 10;
@@ -29,7 +29,7 @@ export class LeatherArmor extends Serialized implements Equipment {
 }
 
 @Register(SRDEquipment)
-export class StuddedLeatherArmor extends Serialized implements Equipment {
+export class StuddedLeatherArmor extends Equipment {
   name = "Studded leather armor";
   cost = toCoins("45 gp");
   weight = 13;

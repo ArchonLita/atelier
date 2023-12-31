@@ -1,4 +1,4 @@
-import { TypeMap } from "../api/Data";
+import { Property, TypeMap } from "../api/Data";
 
 const Coins = ["cp", "sp", "ep", "gp", "pp"] as const;
 type Coin = (typeof Coins)[number];
@@ -18,14 +18,17 @@ export function toCoins(str: string): Currency {
   return { currency: coin, value: parseInt(num) };
 }
 
-export interface Equipment {
-  name: string;
-  weight: number;
-  cost: Currency;
+export abstract class Equipment {
+  abstract name: string;
+  abstract weight: number;
+  abstract cost: Currency;
+
+  @Property()
+  quantity?: number;
 }
 
-export interface Weapon extends Equipment {
-  damage: number; // TODO add damage types
+export abstract class Weapon extends Equipment {
+  abstract damage: number; // TODO add damage types
   // TODO properties
 }
 

@@ -4,6 +4,7 @@ import { Property } from "../api/Data";
 import { Equipment, SRDEquipment } from "./Equipment";
 import { testSerialization } from "../api/Data.test";
 import { SheetWithBaseScores } from "../content/test/TestCharacters.test";
+import { Battleaxe } from "../content/equipment/weapons/MartialMelee";
 
 class TestInventory {
   @Property(SRDEquipment)
@@ -12,11 +13,14 @@ class TestInventory {
 
 test("serialize equipment", () => {
   const inventory = new TestInventory();
-  inventory.equipment.push(new PaddedArmor());
+  const item = new Battleaxe();
+  item.quantity = 4;
+  inventory.equipment.push(item);
   const data = {
     equipment: [
       {
-        _id: "PaddedArmor",
+        _id: "Battleaxe",
+        quantity: 4,
       },
     ],
   };

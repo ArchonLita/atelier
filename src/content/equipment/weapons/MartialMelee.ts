@@ -1,8 +1,8 @@
-import { Register, Serialized } from "../../../api/Data";
+import { Register } from "../../../api/Data";
 import { SRDEquipment, Weapon, toCoins } from "../../../dnd/Equipment";
 
 @Register(SRDEquipment)
-export class Battleaxe extends Serialized implements Weapon {
+export class Battleaxe extends Weapon {
   name = "Battleaxe";
   weight = 4;
   cost = toCoins("10 gp");
@@ -10,7 +10,7 @@ export class Battleaxe extends Serialized implements Weapon {
 }
 
 @Register(SRDEquipment)
-export class Flail extends Serialized implements Weapon {
+export class Flail extends Weapon {
   name = "Flail";
   weight = 2;
   cost = toCoins("10 gp");
@@ -18,7 +18,7 @@ export class Flail extends Serialized implements Weapon {
 }
 
 @Register(SRDEquipment)
-export class Glaive extends Serialized implements Weapon {
+export class Glaive extends Weapon {
   name = "Glaive";
   weight = 6;
   cost = toCoins("20 gp");

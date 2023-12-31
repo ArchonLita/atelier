@@ -31,12 +31,6 @@ export interface Class {
 }
 
 // Character Sheet
-
-export const LoadAbilityScoresEvent = createEvent<Sheet>();
-export const LoadAbilityModifiersEvent = createEvent<Sheet>();
-export const LoadSkillScoresEvent = createEvent<Sheet>();
-export const LoadSkillModifiersEvent = createEvent<Sheet>();
-
 export const LoadModifiersEvent = createEvent<Effect[]>();
 
 export class Sheet extends Emitter {

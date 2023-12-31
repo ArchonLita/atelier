@@ -76,10 +76,6 @@ export function Property<T extends object>(
   };
 }
 
-export class Serialized {
-  metadata: Metadata = { properties: {} };
-}
-
 export interface Serializer<T> {
   serialize(obj: T): any;
   deserialize(obj: any): T;
@@ -135,6 +131,8 @@ export function serialize(obj: any): any {
   if (!properties) return { ...obj }; // no special serialization
   const res: any = {};
   for (const [k, v] of Object.entries(obj)) {
+    if (v === undefined) continue;
+
     const propertyData = properties[k];
     if (!propertyData) continue;
 

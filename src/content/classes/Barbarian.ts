@@ -19,6 +19,8 @@ class ProficiencyOption extends Options<Skill> {
   }
 }
 
+// TODO equipment selection
+
 export class Barbarian implements Class {
   @Property()
   level: number = 0;
