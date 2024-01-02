@@ -1,4 +1,4 @@
-import { Optional } from "./Util";
+import { Optional, getMethodLabels } from "./Util";
 
 export interface Listener {}
 
@@ -77,12 +77,11 @@ export class Emitter {
   }
 
   addListener(listener: Listener) {
-    for (const label of Object.getOwnPropertyNames(
-      Object.getPrototypeOf(listener),
-    )) {
+    for (const label of getMethodLabels(listener)) {
       const method: Method<any> = Reflect.get(listener, label);
       const metadata: Optional<Metadata> = Reflect.get(method, "metadata");
       if (!metadata) continue;
+
       this.addHandler(metadata.event, {
         listener,
         method,
@@ -96,9 +95,7 @@ export class Emitter {
   }
 
   removeListener(listener: Listener) {
-    for (const label of Object.getOwnPropertyNames(
-      Object.getPrototypeOf(listener),
-    )) {
+    for (const label of getMethodLabels(listener)) {
       const method: Method<any> = Reflect.get(listener, label);
       const metadata: Optional<Metadata> = Reflect.get(method, "metadata");
       if (!metadata) continue;

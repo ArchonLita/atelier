@@ -1,7 +1,8 @@
 import { Property } from "../../api/Data";
 import { Subscribe } from "../../api/Event";
+import { LoadModifiersEvent } from "../../dnd/Events";
 import { Options } from "../../dnd/Option";
-import { Class, Feature, LoadModifiersEvent, Sheet } from "../../dnd/Sheet";
+import { Feature, Class, Sheet } from "../../dnd/Sheet";
 import { Effect, Effects, HitDice, Skill } from "../../dnd/Stats";
 
 export class TestFeature implements Feature {}
