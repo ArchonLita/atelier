@@ -1,4 +1,8 @@
 import { Property, TypeMap } from "../api/Data";
+import { Subscribe } from "../api/Event";
+import { Action } from "./Action";
+import { LoadActionsEvent } from "./Events";
+import { Sheet } from "./Sheet";
 
 const Coins = ["cp", "sp", "ep", "gp", "pp"] as const;
 type Coin = (typeof Coins)[number];
@@ -27,9 +31,24 @@ export abstract class Equipment {
   quantity?: number;
 }
 
+export class WeaponAction implements Action {
+  constructor(private weapon: Weapon) {}
+
+  call(user: Sheet, target: Sheet) {
+    console.log(
+      `${user.name} attacked ${target.name} with ${this.weapon.name}`,
+    );
+  }
+}
+
 export abstract class Weapon extends Equipment {
   abstract damage: number; // TODO add damage types
   // TODO properties
+
+  @Subscribe(LoadActionsEvent)
+  loadActions(actions: Action[]) {
+    actions.push(new WeaponAction(this));
+  }
 }
 
 export const SRDEquipment = new TypeMap<Equipment>();

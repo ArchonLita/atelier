@@ -1,6 +1,7 @@
 import { Property } from "../../../api/Data";
 import { Subscribe } from "../../../api/Event";
-import { LoadModifiersEvent, Race, Trait } from "../../../dnd/Sheet";
+import { LoadModifiersEvent } from "../../../dnd/Events";
+import { Trait, Race } from "../../../dnd/Sheet";
 import { Effect, Effects } from "../../../dnd/Stats";
 
 export class KeenSenses implements Trait {

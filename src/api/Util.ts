@@ -38,3 +38,14 @@ export function hash(str: string): number {
 export async function generateDir(path: string) {
   if (!(await exists(path))) await mkdir(path);
 }
+
+export function getMethodLabels(obj: any) {
+  let proto = Object.getPrototypeOf(obj);
+  const labels = new Set();
+  while (proto) {
+    Object.getOwnPropertyNames(proto).forEach((label) => labels.add(label));
+    proto = Object.getPrototypeOf(proto);
+  }
+
+  return [...labels].filter((label) => typeof obj[label] === "function");
+}

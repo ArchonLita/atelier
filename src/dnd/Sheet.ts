@@ -1,7 +1,9 @@
 import { Property } from "../api/Data";
-import { Emitter, Subscribe, createEvent } from "../api/Event";
+import { Emitter, Subscribe } from "../api/Event";
 import { construct } from "../api/Util";
+import { Action } from "./Action";
 import { Equipment, SRDEquipment } from "./Equipment";
+import { LoadModifiersEvent, LoadActionsEvent } from "./Events";
 import {
   Abilities,
   AbilitySkills,
@@ -31,8 +33,6 @@ export interface Class {
 }
 
 // Character Sheet
-export const LoadModifiersEvent = createEvent<Effect[]>();
-
 export class Sheet extends Emitter {
   constructor() {
     super();
@@ -46,7 +46,9 @@ export class Sheet extends Emitter {
   load() {
     this.clearHandlers();
     this.modifiers = [];
+    this.actions = [];
 
+    //TODO separate event calls for equipped armor and armor in inventory
     this.addListeners(this, ...this.feats);
     if (this.race) this.addListeners(this.race, ...this.race.traits);
     if (this.clazz) this.addListeners(this.clazz, ...this.clazz.features);
@@ -57,6 +59,8 @@ export class Sheet extends Emitter {
     this.loadBaseAbilityScores();
     this.call(LoadModifiersEvent, this.modifiers);
     this.loadAttributes();
+    this.addListeners(...this.equipment);
+    this.call(LoadActionsEvent, this.actions);
   }
 
   @Property()
@@ -80,9 +84,16 @@ export class Sheet extends Emitter {
 
   modifiers: Effect[] = [];
 
+  actions: Action[] = [];
+
   @Subscribe(LoadModifiersEvent, -100)
   loadModifiers(modifiers: Effect[]) {
     this.modifiers = modifiers;
+  }
+
+  @Subscribe(LoadActionsEvent, -100)
+  loadActions(actions: Action[]) {
+    this.actions = actions;
   }
 
   loadBaseAbilityScores() {
