@@ -1,5 +1,5 @@
 import { Sheet } from "./dnd/Sheet";
-import { Database } from "./server/Database";
+import { Database, useDatabase } from "./server/Database";
 import { Server } from "./server/Server";
 import { loadContent } from "./Env";
 
@@ -17,6 +17,7 @@ sheet.baseAbilityScores = {
 sheet.load();
 
 const db = new Database(process.env.DB_PATH);
+useDatabase(db);
 const server = new Server(db);
 
 await db.load();

@@ -34,6 +34,8 @@ export interface Class {
 
 // Character Sheet
 export class Sheet extends Emitter {
+  id?: string;
+
   constructor() {
     super();
 

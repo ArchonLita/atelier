@@ -64,21 +64,21 @@ test("serialize nested objects", () => {
 });
 
 test("register subclasses", () => {
-  interface Subclass { }
+  interface Subclass {}
   const Subclasses = new TypeMap<Subclass>();
 
   @Register(Subclasses)
-  class Subclass1 implements Subclass { }
+  class Subclass1 implements Subclass {}
   @Register(Subclasses)
-  class Subclass2 implements Subclass { }
+  class Subclass2 implements Subclass {}
   @Register(Subclasses)
-  class Subclass3 implements Subclass { }
+  class Subclass3 implements Subclass {}
 
   expect(Subclasses).toEqual(new TypeMap(Subclass1, Subclass2, Subclass3));
 });
 
 test("serialize subclasses", () => {
-  interface Subclass { }
+  interface Subclass {}
   const Subclasses = new TypeMap<Subclass>();
 
   class TestSubclassWrapper {
@@ -160,14 +160,14 @@ test("serialize subclasses", () => {
 test("custom serializer", () => {
   const TestSerializer: Serializer<number> = {
     serialize: (obj: number) => ({ value: obj }),
-    deserialize: (obj: any) => obj.value
+    deserialize: (obj: any) => obj.value,
   };
 
   class TestClass {
     @Property(TestSerializer)
     field?: number;
 
-    constructor() { }
+    constructor() {}
   }
 
   const obj = new TestClass();
