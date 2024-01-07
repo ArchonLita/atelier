@@ -51,6 +51,7 @@ export class Schema<T> {
       );
       const id = file.split(".")[0];
       this.data[id] = deserialize(data, this.dataType);
+      this.data[id].id = id;
     }
   }
 }
@@ -71,4 +72,9 @@ export class Database {
     await generateDir(this.path);
     await this.sheets.save();
   }
+}
+
+export let ActiveDatabase: Database;
+export function useDatabase(db: Database) {
+  ActiveDatabase = db;
 }

@@ -3,6 +3,7 @@ import {
   Constructor,
   Property,
   Register,
+  Serializer,
   TypeMap,
   deserialize,
   serialize,
@@ -154,4 +155,23 @@ test("serialize subclasses", () => {
   };
 
   testSerialization(obj, expected, TestSubclassWrapper);
+});
+
+test("custom serializer", () => {
+  const TestSerializer: Serializer<number> = {
+    serialize: (obj: number) => ({ value: obj }),
+    deserialize: (obj: any) => obj.value,
+  };
+
+  class TestClass {
+    @Property(TestSerializer)
+    field?: number;
+
+    constructor() {}
+  }
+
+  const obj = new TestClass();
+  obj.field = 39;
+
+  testSerialization(obj, { field: { value: 39 } }, TestClass);
 });
