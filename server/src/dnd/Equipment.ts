@@ -3,7 +3,7 @@ import { Dice, dice, roll } from "../api/Dice";
 import { Subscribe } from "../api/Event";
 import { Action } from "./Action";
 import { LoadActionsEvent } from "./Events";
-import { Sheet } from "./Sheet";
+import { CharacterSheet } from "./CharacterSheet";
 
 const Coins = ["cp", "sp", "ep", "gp", "pp"] as const;
 type Coin = (typeof Coins)[number];
@@ -35,7 +35,7 @@ export abstract class Equipment {
 export class WeaponAction implements Action {
   constructor(private weapon: Weapon) {}
 
-  call(user: Sheet, target: Sheet) {
+  call(user: CharacterSheet, target: CharacterSheet) {
     // TODO range weapons use dexterity
     // TODO add proficiency bonus, if user has proficiency for used weapon
     const attack = roll(dice(1, 20)) + user.abilityModifiers.strength;

@@ -1,5 +1,5 @@
-import { Sheet } from "./Sheet";
+import { CharacterSheet } from "./CharacterSheet";
 
 export interface Action {
-  call: (user: Sheet, target: Sheet) => void;
+  call: (user: CharacterSheet, target: CharacterSheet) => void;
 }

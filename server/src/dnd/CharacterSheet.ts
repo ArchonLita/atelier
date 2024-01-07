@@ -29,11 +29,10 @@ export interface Class {
   level: number;
   features: Feature[];
 
-  levelUp: (sheet: Sheet) => void;
+  levelUp: (sheet: CharacterSheet) => void;
 }
-
 // Character Sheet
-export class Sheet extends Emitter {
+export class CharacterSheet extends Emitter {
   constructor() {
     super();
 

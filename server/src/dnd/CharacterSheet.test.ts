@@ -1,4 +1,4 @@
-import { Sheet } from "./Sheet";
+import { CharacterSheet } from "./CharacterSheet";
 import { expect, test } from "bun:test";
 import { testSerialization } from "../api/Data.test";
 
@@ -21,7 +21,7 @@ const expectedModifiers = {
 };
 
 test("constructs character sheets accurately", () => {
-  const sheet = new Sheet();
+  const sheet = new CharacterSheet();
   sheet.baseAbilityScores = baseAbilityScores;
   sheet.load();
 
@@ -30,7 +30,7 @@ test("constructs character sheets accurately", () => {
 });
 
 test("serialize and deserialize character sheets", () => {
-  const sheet = new Sheet();
+  const sheet = new CharacterSheet();
   sheet.name = "Mear";
   sheet.baseAbilityScores = baseAbilityScores;
   sheet.load();
@@ -43,5 +43,5 @@ test("serialize and deserialize character sheets", () => {
     equipment: [],
   };
 
-  testSerialization(sheet, data, Sheet);
+  testSerialization(sheet, data, CharacterSheet);
 });

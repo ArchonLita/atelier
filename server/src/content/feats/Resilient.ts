@@ -1,6 +1,6 @@
 import { Subscribe } from "../../api/Event";
 import { LoadModifiersEvent } from "../../dnd/Events";
-import { Feat } from "../../dnd/Sheet";
+import { Feat } from "../../dnd/CharacterSheet";
 import { Ability, Effect, Effects } from "../../dnd/Stats";
 
 export class Resilient implements Feat {

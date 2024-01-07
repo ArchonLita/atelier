@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { Sheet } from "../dnd/Sheet";
+import { CharacterSheet } from "../dnd/CharacterSheet";
 import { Database } from "./Database";
 import { Glob } from "bun";
 
@@ -17,7 +17,7 @@ const baseAbilityScores = {
 const id = "TEST-SHEET";
 
 test("Writes sheets to file database", async () => {
-  const sheet = new Sheet();
+  const sheet = new CharacterSheet();
   sheet.baseAbilityScores = baseAbilityScores;
   sheet.load();
 

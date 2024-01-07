@@ -1,8 +1,8 @@
-import { Sheet } from "../../dnd/Sheet";
+import { CharacterSheet } from "../../dnd/CharacterSheet";
 import { Barbarian } from "../classes/Barbarian";
 
 export function SheetWithBaseScores() {
-  const sheet = new Sheet();
+  const sheet = new CharacterSheet();
   sheet.name = "Lita";
   sheet.baseAbilityScores = {
     strength: 8,
@@ -17,7 +17,7 @@ export function SheetWithBaseScores() {
 }
 
 export function SheetBarbarian() {
-  const sheet = new Sheet();
+  const sheet = new CharacterSheet();
   sheet.name = "Petroff";
 
   sheet.baseAbilityScores = {

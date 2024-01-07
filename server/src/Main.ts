@@ -1,11 +1,11 @@
-import { Sheet } from "./dnd/Sheet";
+import { CharacterSheet } from "./dnd/CharacterSheet";
 import { Database } from "./server/Database";
 import { Server } from "./server/Server";
 import { loadContent } from "./Env";
 
 await loadContent();
 
-const sheet = new Sheet();
+const sheet = new CharacterSheet();
 sheet.baseAbilityScores = {
   strength: 8,
   dexterity: 15,

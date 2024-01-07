@@ -2,7 +2,7 @@ import { Property } from "../../api/Data";
 import { Subscribe } from "../../api/Event";
 import { LoadModifiersEvent } from "../../dnd/Events";
 import { Options } from "../../dnd/Option";
-import { Feature, Class, Sheet } from "../../dnd/Sheet";
+import { Feature, Class, CharacterSheet } from "../../dnd/CharacterSheet";
 import { Effect, Effects, HitDice, Skill } from "../../dnd/Stats";
 
 export class TestFeature implements Feature {}
@@ -37,7 +37,7 @@ export class Barbarian implements Class {
   skillProficiencies = new ProficiencyOption();
   //TODO equipment proficiency + starting equipment
 
-  levelUp(sheet: Sheet) {
+  levelUp(sheet: CharacterSheet) {
     switch (++this.level) {
       case 1:
         this.features.push(new TestFeature());

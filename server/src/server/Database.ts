@@ -1,5 +1,5 @@
 import { Constructor, deserialize, serialize } from "../api/Data";
-import { Sheet } from "../dnd/Sheet";
+import { CharacterSheet } from "../dnd/CharacterSheet";
 import { Optional, generateDir } from "../api/Util";
 import { readFile, readdir } from "fs/promises";
 
@@ -59,7 +59,7 @@ export class Database {
   public readonly sheets;
 
   constructor(public readonly path: string) {
-    this.sheets = new Schema(`${path}/sheets`, Sheet);
+    this.sheets = new Schema(`${path}/sheets`, CharacterSheet);
   }
 
   async load() {
