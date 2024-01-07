@@ -1,5 +1,5 @@
 import { Property, TypeMap } from "../api/Data";
-import { roll } from "../api/Dice";
+import { Dice, dice, roll } from "../api/Dice";
 import { Subscribe } from "../api/Event";
 import { Action } from "./Action";
 import { LoadActionsEvent } from "./Events";
@@ -33,12 +33,12 @@ export abstract class Equipment {
 }
 
 export class WeaponAction implements Action {
-  constructor(private weapon: Weapon) { }
+  constructor(private weapon: Weapon) {}
 
   call(user: Sheet, target: Sheet) {
     // TODO range weapons use dexterity
     // TODO add proficiency bonus, if user has proficiency for used weapon
-    const attack = roll(20) + user.abilityModifiers.strength;
+    const attack = roll(dice(1, 20)) + user.abilityModifiers.strength;
     // if the roll is a 20, it will always hit. if the roll is a 1, it will always miss
 
     if (attack >= target.armorClass) {
@@ -49,13 +49,14 @@ export class WeaponAction implements Action {
       );
     } else {
       console.log(
-        `${user.name} -> ${target.name} (${this.weapon.name}): (${attack}) missed`);
+        `${user.name} -> ${target.name} (${this.weapon.name}): (${attack}) missed`,
+      );
     }
   }
 }
 
 export abstract class Weapon extends Equipment {
-  abstract damage: number; // TODO add damage types
+  abstract damage: Dice; // TODO add damage types
   // TODO properties
 
   @Subscribe(LoadActionsEvent)
