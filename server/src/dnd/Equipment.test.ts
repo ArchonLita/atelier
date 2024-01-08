@@ -30,10 +30,10 @@ test("serialize equipment", () => {
 
 test("apply equipment effects", () => {
   const sheet = SheetWithBaseScores();
-  sheet.load();
+  sheet.reload();
   expect(sheet.armorClass).toEqual(12);
 
   sheet.armor = new PaddedArmor();
-  sheet.load();
+  sheet.reload();
   expect(sheet.armorClass).toEqual(13);
 });

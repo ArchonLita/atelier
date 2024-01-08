@@ -43,7 +43,7 @@ export class Barbarian implements Class {
         this.features.push(new TestFeature());
     }
 
-    sheet.load();
+    sheet.reload();
 
     this.hitDice.push({
       value: 12,

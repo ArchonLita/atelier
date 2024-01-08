@@ -23,7 +23,7 @@ const expectedModifiers = {
 test("constructs character sheets accurately", () => {
   const sheet = new CharacterSheet();
   sheet.baseAbilityScores = baseAbilityScores;
-  sheet.load();
+  sheet.reload();
 
   expect(sheet.abilityScores).toEqual(baseAbilityScores);
   expect(sheet.abilityModifiers).toEqual(expectedModifiers);

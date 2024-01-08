@@ -19,7 +19,7 @@ const id = "TEST-SHEET";
 test("Writes sheets to file database", async () => {
   const sheet = new CharacterSheet();
   sheet.baseAbilityScores = baseAbilityScores;
-  sheet.load();
+  sheet.reload();
 
   db.sheets.set(id, sheet);
 

@@ -11,12 +11,12 @@ test("execute weapon actions", () => {
   const weapon = new Battleaxe();
 
   sheet.equipment.push(weapon);
-  sheet.load();
+  sheet.reload();
 
   expect(sheet.actions).toEqual([new WeaponAction(weapon)]);
 
   const target = SheetWithBaseScores();
-  target.load();
+  target.reload();
 
   sheet.actions[0].call(sheet, target);
 });

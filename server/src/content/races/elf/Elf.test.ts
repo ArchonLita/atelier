@@ -6,7 +6,7 @@ import { SheetWithBaseScores } from "../../test/TestCharacters.test";
 test("create elf", () => {
   const sheet = SheetWithBaseScores();
   sheet.race = new Elf();
-  sheet.load();
+  sheet.reload();
 
   expect(sheet.speed).toEqual(30);
   expect(sheet.abilityScores.dexterity).toEqual(
