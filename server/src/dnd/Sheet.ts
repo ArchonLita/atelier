@@ -45,6 +45,7 @@ export abstract class Sheet extends Emitter {
   }
 
   reload() {
+    // Reload should be called after prop changes.
     this.unload();
     this.load();
   }
