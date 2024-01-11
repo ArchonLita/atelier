@@ -21,6 +21,8 @@ useDatabase(db);
 const server = new Server(db);
 
 await db.load();
+db.sheets.add(sheet);
+
 server.listen(process.env.SERVER_PORT, ({ hostname, port }) => {
   console.log(`Server listening at ${hostname}:${port}`);
 });
