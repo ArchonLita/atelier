@@ -22,6 +22,7 @@ test("Writes sheets to file database", async () => {
   sheet.load();
 
   db.sheets.set(id, sheet);
+  sheet.id = id;
 
   await db.save();
   await db.load();
