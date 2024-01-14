@@ -1,4 +1,4 @@
-import { Property } from "../api/Data";
+import { Property } from "./Data";
 
 export abstract class Options<T> {
   @Property()

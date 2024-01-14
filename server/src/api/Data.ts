@@ -15,7 +15,7 @@ export class TypeMap<T> {
     if (!ctors.includes(ctor)) ctors.push(ctor);
   }
 
-  hash(ctor?: Function): string | undefined {
+  hash(ctor?: Constructor<any>): string | undefined {
     const ctors = this.map[ctor?.name ?? " "];
     if (!ctors) return undefined;
     const index = ctors.findIndex((i) => i == ctor);
@@ -111,7 +111,7 @@ export class SubclassSerializer<T> implements Serializer<T> {
 
   serialize(obj: T): any {
     const res = serialize(obj);
-    const id = this.typeMap.hash(obj?.constructor);
+    const id = this.typeMap.hash(obj?.constructor as Constructor<any>);
     res["_id"] = id;
     return res;
   }

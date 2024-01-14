@@ -1,7 +1,7 @@
 import { Property } from "../../api/Data";
 import { Subscribe } from "../../api/Event";
-import { LoadModifiersEvent } from "../../dnd/Events";
-import { Options } from "../../dnd/Option";
+import { LoadModifiersEvent, LoadSheetEvent } from "../../dnd/Events";
+import { Options } from "../../api/Option";
 import { Feature, Class, Sheet } from "../../dnd/Sheet";
 import { Effect, Effects, HitDice, Skill } from "../../dnd/Stats";
 
@@ -52,6 +52,12 @@ export class Barbarian implements Class {
           ? 12 + sheet.abilityModifiers.constitution
           : 7 + sheet.abilityModifiers.constitution,
     });
+  }
+
+  sheet?: Sheet;
+  @Subscribe(LoadSheetEvent)
+  loadSheet(sheet: Sheet) {
+    this.sheet = sheet;
   }
 
   @Subscribe(LoadModifiersEvent)

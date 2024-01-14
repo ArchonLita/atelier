@@ -41,7 +41,7 @@ export async function generateDir(path: string) {
 
 export function getMethodLabels(obj: any) {
   let proto = Object.getPrototypeOf(obj);
-  const labels = new Set();
+  const labels = new Set<string>();
   while (proto) {
     Object.getOwnPropertyNames(proto).forEach((label) => labels.add(label));
     proto = Object.getPrototypeOf(proto);

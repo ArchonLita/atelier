@@ -3,7 +3,7 @@ import { Emitter, Subscribe } from "../api/Event";
 import { construct } from "../api/Util";
 import { Action } from "./Action";
 import { Equipment, SRDEquipment } from "./Equipment";
-import { LoadModifiersEvent, LoadActionsEvent } from "./Events";
+import { LoadModifiersEvent, LoadActionsEvent, LoadSheetEvent } from "./Events";
 import {
   Abilities,
   AbilitySkills,
@@ -63,6 +63,8 @@ export class Sheet extends Emitter {
     this.loadAttributes();
     this.addListeners(...this.equipment);
     this.call(LoadActionsEvent, this.actions);
+
+    this.call(LoadSheetEvent, this);
   }
 
   @Property()

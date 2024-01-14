@@ -1,10 +1,10 @@
 import { expect, test } from "bun:test";
-import { PaddedArmor } from "../content/equipment/weapons/Armor";
 import { Property } from "../api/Data";
 import { Equipment, SRDEquipment } from "./Equipment";
 import { testSerialization } from "../api/Data.test";
 import { SheetWithBaseScores } from "../content/test/TestCharacters.test";
 import { Battleaxe } from "../content/equipment/weapons/MartialMelee";
+import { PaddedArmor } from "../content/equipment/Armor";
 
 class TestInventory {
   @Property(SRDEquipment)

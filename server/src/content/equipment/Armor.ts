@@ -1,8 +1,8 @@
-import { Register } from "../../../api/Data";
-import { Subscribe } from "../../../api/Event";
-import { Equipment, SRDEquipment, toCoins } from "../../../dnd/Equipment";
-import { LoadModifiersEvent } from "../../../dnd/Events";
-import { Effect, Effects } from "../../../dnd/Stats";
+import { Register } from "../../api/Data";
+import { Subscribe } from "../../api/Event";
+import { SRDEquipment, Equipment, toCoins } from "../../dnd/Equipment";
+import { LoadModifiersEvent } from "../../dnd/Events";
+import { Effect, Effects } from "../../dnd/Stats";
 
 @Register(SRDEquipment)
 export class PaddedArmor extends Equipment {

@@ -1,6 +1,6 @@
-import { testSerialization } from "../api/Data.test";
+import { test, expect } from "bun:test";
+import { testSerialization } from "./Data.test";
 import { Options } from "./Option";
-import { expect, test } from "bun:test";
 
 class TestOptions extends Options<string> {
   getOptions() {
