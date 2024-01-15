@@ -3,11 +3,7 @@ import { Property } from "./Data";
 export abstract class Options<T> {
   @Property()
   public readonly selected: number[] = [];
-  public readonly count: number;
-
-  constructor() {
-    this.count = this.getOptions().length;
-  }
+  abstract readonly count: number;
 
   abstract getOptions(): T[];
 

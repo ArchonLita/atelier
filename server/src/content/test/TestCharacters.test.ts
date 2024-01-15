@@ -1,5 +1,5 @@
 import { Sheet } from "../../dnd/Sheet";
-import { Barbarian } from "../classes/Barbarian";
+import { Barbarian, ProficiencyFeature } from "../classes/Barbarian";
 
 export function SheetWithBaseScores() {
   const sheet = new Sheet();
@@ -30,8 +30,9 @@ export function SheetBarbarian() {
   };
 
   const clazz = new Barbarian();
-  clazz.skillProficiencies.select(2);
-  clazz.skillProficiencies.select(4);
+  // TODO make this more ergonomic ayaya
+  (clazz.features[1] as ProficiencyFeature).skills.select(2);
+  (clazz.features[1] as ProficiencyFeature).skills.select(4);
   sheet.clazz = clazz;
   clazz.levelUp(sheet);
 

@@ -3,7 +3,12 @@ import { Emitter, Subscribe } from "../api/Event";
 import { construct } from "../api/Util";
 import { Action } from "./Action";
 import { Equipment, SRDEquipment } from "./Equipment";
-import { LoadModifiersEvent, LoadActionsEvent, LoadSheetEvent } from "./Events";
+import {
+  LoadModifiersEvent,
+  LoadActionsEvent,
+  LoadSheetEvent,
+  LoadClassEvent,
+} from "./Events";
 import {
   Abilities,
   AbilitySkills,
@@ -23,13 +28,38 @@ export interface Race {
   traits: Trait[];
 }
 
-export interface Feature {}
+export class Feature {
+  clazz?: Class;
+  @Subscribe(LoadClassEvent)
+  loadClass(clazz: Class) {
+    this.clazz = clazz;
+  }
 
-export interface Class {
-  level: number;
-  features: Feature[];
+  sheet?: Sheet;
+  @Subscribe(LoadSheetEvent)
+  loadSheet(sheet: Sheet) {
+    this.sheet = sheet;
+  }
+}
 
-  levelUp: (sheet: Sheet) => void;
+export abstract class Class extends Emitter {
+  abstract level: number;
+  abstract features: Feature[];
+
+  levelUp(sheet: Sheet): void;
+
+  sheet?: Sheet;
+  @Subscribe(LoadSheetEvent)
+  loadSheet(sheet: Sheet) {
+    this.sheet = sheet;
+    this.load();
+  }
+
+  load() {
+    this.clearHandlers();
+    this.addListeners(...this.features);
+    this.call(LoadClassEvent, this);
+  }
 }
 
 // Character Sheet

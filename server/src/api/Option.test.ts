@@ -3,6 +3,7 @@ import { testSerialization } from "./Data.test";
 import { Options } from "./Option";
 
 class TestOptions extends Options<string> {
+  count = 2;
   getOptions() {
     return ["a", "b", "c"];
   }
@@ -10,7 +11,7 @@ class TestOptions extends Options<string> {
 
 test("select from options", () => {
   const options = new TestOptions();
-  expect(options.count).toEqual(3);
+  expect(options.count).toEqual(2);
   expect(options.select(2)).toEqual(true);
   expect(options.selected).toEqual([2]);
   expect(options.getOptions()).toEqual(["a", "b", "c"]);
