@@ -34,7 +34,8 @@ export function SheetBarbarian() {
   (clazz.features[1] as ProficiencyFeature).skills.select(2);
   (clazz.features[1] as ProficiencyFeature).skills.select(4);
   sheet.clazz = clazz;
-  clazz.levelUp(sheet);
+  sheet.load();
+  clazz.levelUp();
 
   return sheet;
 }

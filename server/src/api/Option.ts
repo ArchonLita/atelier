@@ -4,8 +4,7 @@ export abstract class Options<T> {
   @Property()
   public readonly selected: number[] = [];
   abstract readonly count: number;
-
-  abstract getOptions(): T[];
+  abstract readonly options: Readonly<T[]>;
 
   select(index: number) {
     if (this.selected.length < this.count) {

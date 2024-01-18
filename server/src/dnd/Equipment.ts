@@ -1,8 +1,9 @@
 import { Property, TypeMap } from "../api/Data";
 import { Dice, dice, roll } from "../api/Dice";
 import { Subscribe } from "../api/Event";
+import { Split } from "../api/Util";
 import { Action } from "./Action";
-import { LoadActionsEvent } from "./Events";
+import { LoadActionsEvent, LoadSheetEvent } from "./Events";
 import { Sheet } from "./Sheet";
 
 const Coins = ["cp", "sp", "ep", "gp", "pp"] as const;
@@ -13,23 +14,30 @@ export interface Currency {
   value: number;
 }
 
-function isCoin(coin: string): coin is Coin {
-  return Coins.includes(coin as Coin);
-}
+export type CoinExp = `${number} ${Coin}`;
 
-export function toCoins(str: string): Currency {
-  const [num, coin] = str.split(" ");
-  if (!isCoin(coin)) throw "Invalid Coin";
+export function coin(str: CoinExp): Currency {
+  const [num, coin] = str.split(" ") as Split<CoinExp, " ">;
   return { currency: coin, value: parseInt(num) };
 }
 
 export abstract class Equipment {
+  constructor(quantity?: number) {
+    this.quantity = quantity;
+  }
+
   abstract name: string;
   abstract weight: number;
   abstract cost: Currency;
 
   @Property()
   quantity?: number;
+
+  sheet?: Sheet;
+  @Subscribe(LoadSheetEvent)
+  loadSheet(sheet: Sheet) {
+    this.sheet = sheet;
+  }
 }
 
 export class WeaponAction implements Action {

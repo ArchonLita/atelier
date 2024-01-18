@@ -46,7 +46,7 @@ export abstract class Class extends Emitter {
   abstract level: number;
   abstract features: Feature[];
 
-  levelUp(sheet: Sheet): void;
+  abstract levelUp(): void;
 
   sheet?: Sheet;
   @Subscribe(LoadSheetEvent)

@@ -4,9 +4,7 @@ import { Options } from "./Option";
 
 class TestOptions extends Options<string> {
   count = 2;
-  getOptions() {
-    return ["a", "b", "c"];
-  }
+  options = ["a", "b", "c"];
 }
 
 test("select from options", () => {
@@ -14,7 +12,7 @@ test("select from options", () => {
   expect(options.count).toEqual(2);
   expect(options.select(2)).toEqual(true);
   expect(options.selected).toEqual([2]);
-  expect(options.getOptions()).toEqual(["a", "b", "c"]);
+  expect(options.options).toEqual(["a", "b", "c"]);
 });
 
 test("serialize options", () => {

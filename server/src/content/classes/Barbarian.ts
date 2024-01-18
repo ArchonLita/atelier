@@ -2,23 +2,31 @@ import { Property, Register, TypeMap } from "../../api/Data";
 import { Subscribe } from "../../api/Event";
 import { LevelUpEvent, LoadModifiersEvent } from "../../dnd/Events";
 import { Options } from "../../api/Option";
-import { Feature, Class, Sheet } from "../../dnd/Sheet";
+import { Feature, Class } from "../../dnd/Sheet";
 import { Effect, Effects, HitDice, Skill } from "../../dnd/Stats";
+import { Equipment } from "../../dnd/Equipment";
+import {
+  Greataxe,
+  MartialMeleeWeapons,
+} from "../equipment/weapons/MartialMelee";
+import {
+  Handaxe,
+  Javelin,
+  SimpleMeleeWeapons,
+} from "../equipment/weapons/SimpleMelee";
 
 const BarbarianFeature = new TypeMap<Feature>();
 
 class SkillOption extends Options<Skill> {
-  readonly count = 2;
-  getOptions(): Skill[] {
-    return [
-      "animal_handling",
-      "athletics",
-      "intimidation",
-      "nature",
-      "perception",
-      "survival",
-    ];
-  }
+  count = 2;
+  options = [
+    "animal_handling",
+    "athletics",
+    "intimidation",
+    "nature",
+    "perception",
+    "survival",
+  ] as const;
 }
 
 @Register(BarbarianFeature)
@@ -33,14 +41,16 @@ export class ProficiencyFeature extends Feature {
       Effects.addAbilityProficiency("constitution"),
 
       ...this.skills.selected
-        .map((inx) => this.skills.getOptions()[inx])
+        .map((inx) => this.skills.options[inx])
         .map((skill) => Effects.addSkillProficiency(skill)),
     );
   }
 }
 
 @Register(BarbarianFeature)
-class EquipmentFeature extends Feature {}
+class EquipmentFeature extends Feature {
+  // TODO add "kits"
+}
 
 @Register(BarbarianFeature)
 class HitPointsFeature extends Feature {
@@ -82,7 +92,7 @@ export class Barbarian extends Class {
     new EquipmentFeature(),
   ];
 
-  levelUp(sheet: Sheet) {
+  levelUp() {
     this.level++;
     this.call(LevelUpEvent);
 
@@ -92,6 +102,6 @@ export class Barbarian extends Class {
     }
 
     this.load();
-    sheet.load();
+    this.sheet?.load();
   }
 }
