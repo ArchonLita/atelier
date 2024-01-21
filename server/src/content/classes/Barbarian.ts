@@ -4,16 +4,6 @@ import { LevelUpEvent, LoadModifiersEvent } from "../../dnd/Events";
 import { Options } from "../../api/Option";
 import { Feature, Class } from "../../dnd/Sheet";
 import { Effect, Effects, HitDice, Skill } from "../../dnd/Stats";
-import { Equipment } from "../../dnd/Equipment";
-import {
-  Greataxe,
-  MartialMeleeWeapons,
-} from "../equipment/weapons/MartialMelee";
-import {
-  Handaxe,
-  Javelin,
-  SimpleMeleeWeapons,
-} from "../equipment/weapons/SimpleMelee";
 
 const BarbarianFeature = new TypeMap<Feature>();
 

@@ -1,9 +1,10 @@
 import { Property, TypeMap } from "../api/Data";
 import { Dice, dice, roll } from "../api/Dice";
-import { Subscribe } from "../api/Event";
+import { Emitter, Subscribe } from "../api/Event";
+import { Options } from "../api/Option";
 import { Split } from "../api/Util";
 import { Action } from "./Action";
-import { LoadActionsEvent, LoadSheetEvent } from "./Events";
+import { LoadActionsEvent, LoadKitEvent, LoadSheetEvent } from "./Events";
 import { Sheet } from "./Sheet";
 
 const Coins = ["cp", "sp", "ep", "gp", "pp"] as const;
@@ -70,6 +71,33 @@ export abstract class Weapon extends Equipment {
   @Subscribe(LoadActionsEvent)
   loadActions(actions: Action[]) {
     actions.push(new WeaponAction(this));
+  }
+}
+
+export abstract class KitOptions extends Options<Equipment> {
+  kit?: Kit;
+  @Subscribe(LoadKitEvent)
+  loadKit(kit: Kit) {
+    this.kit = kit;
+  }
+
+  select(index: number) {
+    const res = super.select(index);
+    if (res) this.kit?.sheet?.equipment?.push(this.options[index]);
+
+    return res;
+  }
+}
+
+export abstract class Kit extends Equipment {
+  emitter = new Emitter();
+
+  load() {
+    this.emitter.clearHandlers();
+    this.emitter.addListeners(
+      ...Object.values(this).filter((obj) => obj instanceof KitOptions),
+    );
+    this.emitter.call(LoadKitEvent, this);
   }
 }
 

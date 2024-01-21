@@ -1,6 +1,6 @@
 import { isPrimitive } from "./Util";
 
-export type Constructor<T> = new () => T;
+export type Constructor<T> = new (...args: any[]) => T;
 
 export class TypeMap<T> {
   private readonly map: Record<string, Constructor<T>[]> = {};
@@ -15,7 +15,7 @@ export class TypeMap<T> {
     if (!ctors.includes(ctor)) ctors.push(ctor);
   }
 
-  hash(ctor?: Constructor<any>): string | undefined {
+  hash(ctor?: Constructor<T>): string | undefined {
     const ctors = this.map[ctor?.name ?? " "];
     if (!ctors) return undefined;
     const index = ctors.findIndex((i) => i == ctor);
@@ -55,8 +55,8 @@ function getMetadata(target: any): Metadata {
   return target.metadata ?? (target.metadata = { properties: {} });
 }
 
-export function Property<T>(
-  ctors?: Constructor<T> | Constructor<T>[] | TypeMap<T> | Serializer<T>,
+export function Property<T extends object>(
+  ctors?: Constructor<T> | Constructor<T>[] | TypeMap<T> | Serializer<any>,
 ) {
   const serializer: Serializer<T> = (() => {
     if (!ctors) return DefaultSerializer;
@@ -90,7 +90,7 @@ export const DefaultSerializer: Serializer<any> = {
 };
 
 export class ClassSerializer<T> implements Serializer<T> {
-  constructor(private readonly ctor: Constructor<T>) {}
+  constructor(private readonly ctor: Constructor<T>) { }
 
   serialize(obj: T): any {
     return serialize(obj);
@@ -101,7 +101,7 @@ export class ClassSerializer<T> implements Serializer<T> {
   }
 }
 
-export class SubclassSerializer<T> implements Serializer<T> {
+export class SubclassSerializer<T extends object> implements Serializer<T> {
   private typeMap = new TypeMap<T>();
 
   constructor(ctors: Constructor<T>[] | TypeMap<T>) {
@@ -111,7 +111,7 @@ export class SubclassSerializer<T> implements Serializer<T> {
 
   serialize(obj: T): any {
     const res = serialize(obj);
-    const id = this.typeMap.hash(obj?.constructor as Constructor<any>);
+    const id = this.typeMap.hash(obj.constructor as Constructor<any>);
     res["_id"] = id;
     return res;
   }

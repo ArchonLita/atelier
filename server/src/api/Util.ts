@@ -39,7 +39,7 @@ export async function generateDir(path: string) {
   if (!(await exists(path))) await mkdir(path);
 }
 
-export function getMethodLabels(obj: any) {
+export function getLabels(obj: any) {
   let proto = Object.getPrototypeOf(obj);
   const labels = new Set<string>();
   while (proto) {
@@ -47,13 +47,19 @@ export function getMethodLabels(obj: any) {
     proto = Object.getPrototypeOf(proto);
   }
 
-  return [...labels].filter((label) => typeof obj[label] === "function");
+  return [...labels];
 }
 
-export type Split<S extends string, D extends string> = string extends S
-  ? string[]
-  : S extends ""
-    ? []
-    : S extends `${infer T}${D}${infer U}`
-      ? [T, ...Split<U, D>]
-      : [S];
+export function getMethodLabels(obj: any) {
+  return getLabels(obj).filter((label) => typeof obj[label] === "function");
+}
+
+export function getObjectLabels(obj: any) {
+  return getLabels(obj).filter((label) => typeof obj[label] !== "function");
+}
+
+// prettier-ignore
+export type Split<S extends string, D extends string> =
+  string extends S ? string[] :
+  S extends '' ? [] :
+  S extends `${infer T}${D}${infer U}` ? [T, ...Split<U, D>] : [S];
