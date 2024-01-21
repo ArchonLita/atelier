@@ -38,11 +38,6 @@ export class ProficiencyFeature extends Feature {
 }
 
 @Register(BarbarianFeature)
-class EquipmentFeature extends Feature {
-  // TODO add "kits"
-}
-
-@Register(BarbarianFeature)
 class HitPointsFeature extends Feature {
   @Property()
   hitDice: HitDice[] = [];
@@ -66,6 +61,11 @@ class HitPointsFeature extends Feature {
 
     modifiers.push(Effects.addAttribute("max_hit_points", hitPoints));
   }
+}
+
+@Register(BarbarianFeature)
+class EquipmentFeature extends Feature {
+  // TODO add "kits"
 }
 
 @Register(BarbarianFeature)

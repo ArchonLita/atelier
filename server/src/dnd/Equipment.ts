@@ -2,7 +2,7 @@ import { Property, TypeMap } from "../api/Data";
 import { Dice, dice, roll } from "../api/Dice";
 import { Emitter, Subscribe } from "../api/Event";
 import { Options } from "../api/Option";
-import { Split } from "../api/Util";
+import { Split, removeAll } from "../api/Util";
 import { Action } from "./Action";
 import { LoadActionsEvent, LoadKitEvent, LoadSheetEvent } from "./Events";
 import { Sheet } from "./Sheet";
@@ -83,7 +83,16 @@ export abstract class KitOptions extends Options<Equipment> {
 
   select(index: number) {
     const res = super.select(index);
-    if (res) this.kit?.sheet?.equipment?.push(this.options[index]);
+    if (this.kit && this.kit.sheet?.equipment) {
+      if (res) this.kit.sheet.equipment.push(this.options[index]);
+      if (
+        this.kit
+          .options()
+          .map((o) => o.selected.length === o.count)
+          .reduce((acc, val) => acc && val, true)
+      )
+        removeAll(this.kit.sheet?.equipment, this.kit);
+    }
 
     return res;
   }
@@ -94,10 +103,12 @@ export abstract class Kit extends Equipment {
 
   load() {
     this.emitter.clearHandlers();
-    this.emitter.addListeners(
-      ...Object.values(this).filter((obj) => obj instanceof KitOptions),
-    );
+    this.emitter.addListeners(...this.options());
     this.emitter.call(LoadKitEvent, this);
+  }
+
+  options(): KitOptions[] {
+    return Object.values(this).filter((obj) => obj instanceof KitOptions);
   }
 }
 

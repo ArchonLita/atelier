@@ -63,3 +63,9 @@ export type Split<S extends string, D extends string> =
   string extends S ? string[] :
   S extends '' ? [] :
   S extends `${infer T}${D}${infer U}` ? [T, ...Split<U, D>] : [S];
+
+export function removeAll<T>(arr: T[], item: T) {
+  for (let i = arr.length; i--; ) {
+    if (arr[i] === item) arr.splice(i, 1);
+  }
+}

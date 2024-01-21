@@ -4,7 +4,7 @@ import { Equipment, Kit, KitOptions, SRDEquipment, coin } from "./Equipment";
 import { testSerialization } from "../api/Data.test";
 import { SheetWithBaseScores } from "../content/test/TestCharacters.test";
 import { Battleaxe } from "../content/equipment/weapons/MartialMelee";
-import { PaddedArmor } from "../content/equipment/Armor";
+import { LeatherArmor, PaddedArmor } from "../content/equipment/Armor";
 import { Javelin } from "../content/equipment/weapons/SimpleMelee";
 
 class TestInventory {
@@ -45,12 +45,18 @@ test("claim items in kits", () => {
     options = [new Battleaxe(), new Javelin()];
   }
 
+  class TestKitOptions2 extends KitOptions {
+    count = 1;
+    options = [new PaddedArmor(), new LeatherArmor()];
+  }
+
   class TestKit extends Kit {
     name = "Test Kit";
     weight = 0;
     cost = coin("0 cp");
 
     options1 = new TestKitOptions1();
+    options2 = new TestKitOptions2();
   }
 
   const sheet = SheetWithBaseScores();
@@ -60,7 +66,13 @@ test("claim items in kits", () => {
   sheet.load();
 
   expect(sheet.equipment.map((e) => e.name)).toEqual(["Test Kit"]);
-  kit.options1.select(0);
 
+  kit.options1.select(0);
   expect(sheet.equipment.map((e) => e.name)).toEqual(["Test Kit", "Battleaxe"]);
+
+  kit.options2.select(0);
+  expect(sheet.equipment.map((e) => e.name)).toEqual([
+    "Battleaxe",
+    "Padded armor",
+  ]);
 });
