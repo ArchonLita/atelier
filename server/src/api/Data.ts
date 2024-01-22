@@ -55,9 +55,13 @@ function getMetadata(target: any): Metadata {
   return target.metadata ?? (target.metadata = { properties: {} });
 }
 
-export function Property<T extends object>(
-  ctors?: Constructor<T> | Constructor<T>[] | TypeMap<T> | Serializer<any>,
-) {
+export type PropertyType<T> =
+  | Constructor<T>
+  | Constructor<T>[]
+  | TypeMap<T>
+  | Serializer<any>;
+
+export function Property<T extends object>(ctors?: PropertyType<T>) {
   const serializer: Serializer<T> = (() => {
     if (!ctors) return DefaultSerializer;
 

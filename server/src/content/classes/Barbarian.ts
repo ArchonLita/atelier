@@ -8,15 +8,17 @@ import { Effect, Effects, HitDice, Skill } from "../../dnd/Stats";
 const BarbarianFeature = new TypeMap<Feature>();
 
 class SkillOption extends Options<Skill> {
-  count = 2;
-  options = [
-    "animal_handling",
-    "athletics",
-    "intimidation",
-    "nature",
-    "perception",
-    "survival",
-  ] as const;
+  model = {
+    count: 2,
+    options: [
+      "animal_handling",
+      "athletics",
+      "intimidation",
+      "nature",
+      "perception",
+      "survival",
+    ] as Skill[],
+  };
 }
 
 @Register(BarbarianFeature)
@@ -30,9 +32,9 @@ export class ProficiencyFeature extends Feature {
       Effects.addAbilityProficiency("strength"),
       Effects.addAbilityProficiency("constitution"),
 
-      ...this.skills.selected
-        .map((inx) => this.skills.options[inx])
-        .map((skill) => Effects.addSkillProficiency(skill)),
+      ...this.skills.selected.map((skill) =>
+        Effects.addSkillProficiency(skill),
+      ),
     );
   }
 }

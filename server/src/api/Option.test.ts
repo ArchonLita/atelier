@@ -1,33 +1,36 @@
 import { test, expect } from "bun:test";
 import { testSerialization } from "./Data.test";
-import { MultiOptions, Options } from "./Option";
+import { Options } from "./Option";
 
 class TestOptions extends Options<string> {
-  count = 2;
-  options = ["a", "b", "c"];
+  model = {
+    count: 2,
+    options: ["a", "b", "c"],
+  };
 }
 
 test("select from options", () => {
   const options = new TestOptions();
-  expect(options.count).toEqual(2);
-  expect(options.select(2)).toEqual(true);
-  expect(options.selected).toEqual([2]);
-  expect(options.options).toEqual(["a", "b", "c"]);
+
+  expect(options.model.count).toEqual(2);
+  expect(options.model.options).toEqual(["a", "b", "c"]);
+
+  expect(options.select([0, 2])).toEqual(true);
+  expect(options.selected).toEqual(["a", "c"]);
 });
 
 test("serialize options", () => {
   const options = new TestOptions();
-  options.select(1);
-  options.select(2);
+  options.select([1, 2]);
 
   const data = {
-    selected: [1, 2],
+    selected: ["b", "c"],
   };
 
   testSerialization(options, data, TestOptions);
 });
 
-class TestMultiOptions extends MultiOptions<string> {
+class TestMultiOptions extends Options<string> {
   model = {
     count: 2,
     options: [

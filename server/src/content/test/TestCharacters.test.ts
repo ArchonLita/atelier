@@ -31,8 +31,7 @@ export function SheetBarbarian() {
 
   const clazz = new Barbarian();
   // TODO make this more ergonomic ayaya
-  (clazz.features[1] as ProficiencyFeature).skills.select(2);
-  (clazz.features[1] as ProficiencyFeature).skills.select(4);
+  (clazz.features[1] as ProficiencyFeature).skills.select([2, 4]);
   sheet.clazz = clazz;
   sheet.load();
   clazz.levelUp();

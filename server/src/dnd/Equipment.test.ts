@@ -1,11 +1,10 @@
 import { expect, test } from "bun:test";
 import { Property } from "../api/Data";
-import { Equipment, Kit, KitOptions, SRDEquipment, coin } from "./Equipment";
 import { testSerialization } from "../api/Data.test";
-import { SheetWithBaseScores } from "../content/test/TestCharacters.test";
+import { PaddedArmor } from "../content/equipment/Armor";
 import { Battleaxe } from "../content/equipment/weapons/MartialMelee";
-import { LeatherArmor, PaddedArmor } from "../content/equipment/Armor";
-import { Javelin } from "../content/equipment/weapons/SimpleMelee";
+import { SheetWithBaseScores } from "../content/test/TestCharacters.test";
+import { SRDEquipment, Equipment } from "./Equipment";
 
 class TestInventory {
   @Property(SRDEquipment)
@@ -37,42 +36,4 @@ test("apply equipment effects", () => {
   sheet.armor = new PaddedArmor();
   sheet.load();
   expect(sheet.armorClass).toEqual(13);
-});
-
-test("claim items in kits", () => {
-  class TestKitOptions1 extends KitOptions {
-    count = 1;
-    options = [new Battleaxe(), new Javelin()];
-  }
-
-  class TestKitOptions2 extends KitOptions {
-    count = 1;
-    options = [new PaddedArmor(), new LeatherArmor()];
-  }
-
-  class TestKit extends Kit {
-    name = "Test Kit";
-    weight = 0;
-    cost = coin("0 cp");
-
-    options1 = new TestKitOptions1();
-    options2 = new TestKitOptions2();
-  }
-
-  const sheet = SheetWithBaseScores();
-  const kit = new TestKit();
-  kit.load();
-  sheet.equipment.push(kit);
-  sheet.load();
-
-  expect(sheet.equipment.map((e) => e.name)).toEqual(["Test Kit"]);
-
-  kit.options1.select(0);
-  expect(sheet.equipment.map((e) => e.name)).toEqual(["Test Kit", "Battleaxe"]);
-
-  kit.options2.select(0);
-  expect(sheet.equipment.map((e) => e.name)).toEqual([
-    "Battleaxe",
-    "Padded armor",
-  ]);
 });

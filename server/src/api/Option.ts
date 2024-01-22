@@ -1,20 +1,5 @@
-import { Property } from "./Data";
+import { Property, PropertyType } from "./Data";
 import { hasDuplicates } from "./Util";
-
-export abstract class Options<T> {
-  @Property()
-  public readonly selected: number[] = [];
-  abstract readonly count: number;
-  abstract readonly options: Readonly<T[]>;
-
-  select(index: number) {
-    if (this.selected.length < this.count) {
-      this.selected.push(index);
-      return true;
-    }
-    return false;
-  }
-}
 
 interface Model<T> {
   readonly count: number;
@@ -71,9 +56,10 @@ function validateSelection<T>(model: Model<T>, selection: Selection): boolean {
   return true;
 }
 
-export abstract class MultiOptions<T> {
+export abstract class Options<T> {
   abstract readonly model: Model<T>;
 
+  @Property()
   selected: T[] = [];
 
   select(selection: Selection) {

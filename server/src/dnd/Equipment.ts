@@ -74,42 +74,4 @@ export abstract class Weapon extends Equipment {
   }
 }
 
-export abstract class KitOptions extends Options<Equipment> {
-  kit?: Kit;
-  @Subscribe(LoadKitEvent)
-  loadKit(kit: Kit) {
-    this.kit = kit;
-  }
-
-  select(index: number) {
-    const res = super.select(index);
-    if (this.kit && this.kit.sheet?.equipment) {
-      if (res) this.kit.sheet.equipment.push(this.options[index]);
-      if (
-        this.kit
-          .options()
-          .map((o) => o.selected.length === o.count)
-          .reduce((acc, val) => acc && val, true)
-      )
-        removeAll(this.kit.sheet?.equipment, this.kit);
-    }
-
-    return res;
-  }
-}
-
-export abstract class Kit extends Equipment {
-  emitter = new Emitter();
-
-  load() {
-    this.emitter.clearHandlers();
-    this.emitter.addListeners(...this.options());
-    this.emitter.call(LoadKitEvent, this);
-  }
-
-  options(): KitOptions[] {
-    return Object.values(this).filter((obj) => obj instanceof KitOptions);
-  }
-}
-
 export const SRDEquipment = new TypeMap<Equipment>();
