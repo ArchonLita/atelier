@@ -64,8 +64,16 @@ export type Split<S extends string, D extends string> =
   S extends '' ? [] :
   S extends `${infer T}${D}${infer U}` ? [T, ...Split<U, D>] : [S];
 
+export type Mutable<T> = {
+  -readonly [key in keyof T]: T[key];
+};
+
 export function removeAll<T>(arr: T[], item: T) {
   for (let i = arr.length; i--; ) {
     if (arr[i] === item) arr.splice(i, 1);
   }
+}
+
+export function hasDuplicates<T>(arr: T[]) {
+  return new Set(arr).size !== arr.length;
 }

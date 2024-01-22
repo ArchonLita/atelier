@@ -1,6 +1,6 @@
 import { test, expect } from "bun:test";
 import { testSerialization } from "./Data.test";
-import { Options } from "./Option";
+import { MultiOptions, Options } from "./Option";
 
 class TestOptions extends Options<string> {
   count = 2;
@@ -25,4 +25,34 @@ test("serialize options", () => {
   };
 
   testSerialization(options, data, TestOptions);
+});
+
+class TestMultiOptions extends MultiOptions<string> {
+  model = {
+    count: 2,
+    options: [
+      "a",
+      "b",
+      "c",
+      {
+        count: 1,
+        options: ["foo", "bar", "baz"],
+      },
+    ],
+  };
+}
+
+test("select from multioptions", () => {
+  const options: TestMultiOptions = new TestMultiOptions();
+
+  // erroneous inputs
+  expect(options.select([])).toBe(false); // not enough options selected
+  expect(options.select([0, 1, 2])).toBe(false); // too many options selected
+  expect(options.select([0, 0])).toBe(false); // duplicate options selected
+  expect(options.select([0, 3])).toBe(false); // suboptions not selected
+  expect(options.select([0, [3, 0, 1]])).toBe(false); // too many suboptions selected
+  expect(options.select([0, [3, 0, 0]])).toBe(false); // duplicate suboptions selected
+
+  expect(options.select([0, [3, 0]])).toBe(true);
+  expect(options.selected).toEqual(["a", "foo"]);
 });
