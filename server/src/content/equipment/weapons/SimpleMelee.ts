@@ -49,3 +49,10 @@ export const SimpleMeleeWeapons = [
   Handaxe,
   Javelin,
 ] as const;
+
+export function AnySimpleMeleeWeapon() {
+  return {
+    count: 1,
+    options: SimpleMeleeWeapons.map((ctor) => new ctor()),
+  };
+}

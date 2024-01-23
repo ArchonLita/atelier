@@ -4,6 +4,16 @@ import { LevelUpEvent, LoadModifiersEvent } from "../../dnd/Events";
 import { Options } from "../../api/Option";
 import { Feature, Class } from "../../dnd/Sheet";
 import { Effect, Effects, HitDice, Skill } from "../../dnd/Stats";
+import { Equipment, SRDEquipment } from "../../dnd/Equipment";
+import {
+  AnyMartialMeleeWeapon,
+  Greataxe,
+} from "../equipment/weapons/MartialMelee";
+import {
+  AnySimpleMeleeWeapon,
+  Handaxe,
+  Javelin,
+} from "../equipment/weapons/SimpleMelee";
 
 const BarbarianFeature = new TypeMap<Feature>();
 
@@ -65,9 +75,46 @@ class HitPointsFeature extends Feature {
   }
 }
 
+class BarbarianEquipment extends Options<Equipment> {
+  @Property(SRDEquipment)
+  selected: Equipment[] = [];
+
+  model = {
+    count: 3,
+    options: [
+      {
+        count: 1,
+        options: [new Greataxe(), AnyMartialMeleeWeapon()],
+      },
+
+      {
+        count: 1,
+        options: [new Handaxe(2), AnySimpleMeleeWeapon()],
+      },
+
+      //TODO add explorer's pack
+      {
+        count: 1,
+        options: [new Javelin(4)],
+      },
+    ],
+  };
+}
+
 @Register(BarbarianFeature)
-class EquipmentFeature extends Feature {
-  // TODO add "kits"
+export class EquipmentFeature extends Feature {
+  options = new BarbarianEquipment();
+
+  @Property()
+  claimed: boolean = false;
+
+  claim() {
+    if (this.claimed) return;
+    if (this.options.selected.length !== 0) {
+      this.sheet?.equipment.push(...this.options.selected);
+      this.claimed = true;
+    }
+  }
 }
 
 @Register(BarbarianFeature)

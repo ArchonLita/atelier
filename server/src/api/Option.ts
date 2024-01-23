@@ -1,7 +1,7 @@
-import { Property, PropertyType } from "./Data";
+import { Property } from "./Data";
 import { hasDuplicates } from "./Util";
 
-interface Model<T> {
+export interface Model<T> {
   readonly count: number;
   readonly options: (Model<T> | T)[];
 }

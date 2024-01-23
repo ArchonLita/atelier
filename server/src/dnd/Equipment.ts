@@ -1,10 +1,9 @@
 import { Property, TypeMap } from "../api/Data";
 import { Dice, dice, roll } from "../api/Dice";
-import { Emitter, Subscribe } from "../api/Event";
-import { Options } from "../api/Option";
-import { Split, removeAll } from "../api/Util";
+import { Subscribe } from "../api/Event";
+import { Split } from "../api/Util";
 import { Action } from "./Action";
-import { LoadActionsEvent, LoadKitEvent, LoadSheetEvent } from "./Events";
+import { LoadActionsEvent, LoadSheetEvent } from "./Events";
 import { Sheet } from "./Sheet";
 
 const Coins = ["cp", "sp", "ep", "gp", "pp"] as const;

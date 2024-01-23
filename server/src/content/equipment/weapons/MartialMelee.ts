@@ -1,6 +1,7 @@
 import { Register } from "../../../api/Data";
 import { dice } from "../../../api/Dice";
-import { SRDEquipment, Weapon, coin } from "../../../dnd/Equipment";
+import { Model } from "../../../api/Option";
+import { Equipment, SRDEquipment, Weapon, coin } from "../../../dnd/Equipment";
 
 @Register(SRDEquipment)
 export class Battleaxe extends Weapon {
@@ -40,3 +41,10 @@ export const MartialMeleeWeapons = [
   Glaive,
   Greataxe,
 ] as const;
+
+export function AnyMartialMeleeWeapon(): Model<Equipment> {
+  return {
+    count: 1,
+    options: MartialMeleeWeapons.map((ctor) => new ctor()),
+  };
+}
