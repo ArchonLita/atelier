@@ -2,7 +2,6 @@ import { Property } from "../api/Data";
 import { Emitter, Subscribe } from "../api/Event";
 import { construct } from "../api/Util";
 import { Action } from "./Action";
-import { Equipment, SRDEquipment } from "./Equipment";
 import { LoadModifiersEvent, LoadActionsEvent } from "./Events";
 import {
   Abilities,
@@ -27,14 +26,11 @@ export abstract class Sheet extends Emitter {
   name: string = "";
 
   load() {
-    //TODO separate event calls for equipped armor and armor in inventory
     if (this.race) this.addListeners(this.race, ...this.race.traits);
-    if (this.armor) this.addListener(this.armor);
 
     this.loadBaseAbilityScores();
     this.call(LoadModifiersEvent, this.modifiers);
     this.loadAttributes();
-    this.addListeners(...this.equipment);
     this.call(LoadActionsEvent, this.actions);
   }
 
@@ -150,12 +146,6 @@ export abstract class Sheet extends Emitter {
   // TODO register all races here
   @Property()
   race?: Race;
-
-  @Property(SRDEquipment)
-  equipment: Equipment[] = [];
-
-  @Property(SRDEquipment)
-  armor?: Equipment;
 
   displayInformation() {
     console.log(`-=-=- ${this.name} -=-=-`);
