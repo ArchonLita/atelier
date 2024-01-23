@@ -20,13 +20,13 @@ export class Wolf extends MonsterSheet {
     this.tags.add("unaligned");
   }
 
-  @Subscribe(LoadModifiersEvent)
-  loadModifiers(modifiers: Effect[]) {
-    modifiers.push(
+  load() {
+    this.modifiers.push(
       Effects.setAttribute("armor_class", 13),
       Effects.setAttribute("speed", 40),
       Effects.addSkillProficiency("perception"),
       Effects.addSkillProficiency("stealth"),
     );
+    super.load();
   }
 }
