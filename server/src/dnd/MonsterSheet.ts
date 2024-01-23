@@ -8,15 +8,12 @@ export class MonsterSheet extends Sheet {
     super();
   }
 
-  @Property()
   name: string = "";
 
   // todo: consider size
 
-  @Property()
   tags: Set<string> = new Set<string>();
 
-  @Property()
   challengeRating: number = 0;
 
   load() {
